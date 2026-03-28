@@ -1,0 +1,16 @@
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\bin\Debug\net8.0-windows\AppTunnel.Vpn.WireGuard.deps.json
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\bin\Debug\net8.0-windows\AppTunnel.Vpn.WireGuard.dll
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\bin\Debug\net8.0-windows\AppTunnel.Vpn.WireGuard.pdb
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\bin\Debug\net8.0-windows\AppTunnel.Core.dll
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\bin\Debug\net8.0-windows\AppTunnel.Core.pdb
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\obj\Debug\net8.0-windows\AppTunnel.Vpn.WireGuard.csproj.AssemblyReference.cache
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\obj\Debug\net8.0-windows\AppTunnel.Vpn.WireGuard.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\obj\Debug\net8.0-windows\AppTunnel.Vpn.WireGuard.AssemblyInfoInputs.cache
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\obj\Debug\net8.0-windows\AppTunnel.Vpn.WireGuard.AssemblyInfo.cs
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\obj\Debug\net8.0-windows\AppTunnel.Vpn.WireGuard.csproj.CoreCompileInputs.cache
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\obj\Debug\net8.0-windows\AppTunnel.Vpn.WireGuard.sourcelink.json
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\obj\Debug\net8.0-windows\AppTunne.548884C3.Up2Date
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\obj\Debug\net8.0-windows\AppTunnel.Vpn.WireGuard.dll
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\obj\Debug\net8.0-windows\refint\AppTunnel.Vpn.WireGuard.dll
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\obj\Debug\net8.0-windows\AppTunnel.Vpn.WireGuard.pdb
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.WireGuard\obj\Debug\net8.0-windows\ref\AppTunnel.Vpn.WireGuard.dll

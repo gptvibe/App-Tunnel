@@ -1,0 +1,16 @@
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\bin\Debug\net8.0-windows\AppTunnel.Router.WinDivert.deps.json
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\bin\Debug\net8.0-windows\AppTunnel.Router.WinDivert.dll
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\bin\Debug\net8.0-windows\AppTunnel.Router.WinDivert.pdb
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\bin\Debug\net8.0-windows\AppTunnel.Core.dll
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\bin\Debug\net8.0-windows\AppTunnel.Core.pdb
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\obj\Debug\net8.0-windows\AppTunnel.Router.WinDivert.csproj.AssemblyReference.cache
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\obj\Debug\net8.0-windows\AppTunnel.Router.WinDivert.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\obj\Debug\net8.0-windows\AppTunnel.Router.WinDivert.AssemblyInfoInputs.cache
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\obj\Debug\net8.0-windows\AppTunnel.Router.WinDivert.AssemblyInfo.cs
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\obj\Debug\net8.0-windows\AppTunnel.Router.WinDivert.csproj.CoreCompileInputs.cache
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\obj\Debug\net8.0-windows\AppTunnel.Router.WinDivert.sourcelink.json
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\obj\Debug\net8.0-windows\AppTunne.5A68FFC1.Up2Date
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\obj\Debug\net8.0-windows\AppTunnel.Router.WinDivert.dll
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\obj\Debug\net8.0-windows\refint\AppTunnel.Router.WinDivert.dll
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\obj\Debug\net8.0-windows\AppTunnel.Router.WinDivert.pdb
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Router.WinDivert\obj\Debug\net8.0-windows\ref\AppTunnel.Router.WinDivert.dll

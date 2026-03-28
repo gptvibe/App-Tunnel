@@ -1,0 +1,16 @@
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\bin\Debug\net8.0-windows\AppTunnel.Vpn.OpenVpn.deps.json
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\bin\Debug\net8.0-windows\AppTunnel.Vpn.OpenVpn.dll
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\bin\Debug\net8.0-windows\AppTunnel.Vpn.OpenVpn.pdb
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\bin\Debug\net8.0-windows\AppTunnel.Core.dll
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\bin\Debug\net8.0-windows\AppTunnel.Core.pdb
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\obj\Debug\net8.0-windows\AppTunnel.Vpn.OpenVpn.csproj.AssemblyReference.cache
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\obj\Debug\net8.0-windows\AppTunnel.Vpn.OpenVpn.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\obj\Debug\net8.0-windows\AppTunnel.Vpn.OpenVpn.AssemblyInfoInputs.cache
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\obj\Debug\net8.0-windows\AppTunnel.Vpn.OpenVpn.AssemblyInfo.cs
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\obj\Debug\net8.0-windows\AppTunnel.Vpn.OpenVpn.csproj.CoreCompileInputs.cache
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\obj\Debug\net8.0-windows\AppTunnel.Vpn.OpenVpn.sourcelink.json
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\obj\Debug\net8.0-windows\AppTunne.389D6406.Up2Date
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\obj\Debug\net8.0-windows\AppTunnel.Vpn.OpenVpn.dll
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\obj\Debug\net8.0-windows\refint\AppTunnel.Vpn.OpenVpn.dll
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\obj\Debug\net8.0-windows\AppTunnel.Vpn.OpenVpn.pdb
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Vpn.OpenVpn\obj\Debug\net8.0-windows\ref\AppTunnel.Vpn.OpenVpn.dll

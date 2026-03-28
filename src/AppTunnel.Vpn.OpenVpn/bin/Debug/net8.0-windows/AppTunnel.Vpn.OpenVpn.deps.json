@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "AppTunnel.Vpn.OpenVpn/1.0.0": {
+        "dependencies": {
+          "AppTunnel.Core": "1.0.0"
+        },
+        "runtime": {
+          "AppTunnel.Vpn.OpenVpn.dll": {}
+        }
+      },
+      "AppTunnel.Core/1.0.0": {
+        "runtime": {
+          "AppTunnel.Core.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "AppTunnel.Vpn.OpenVpn/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "AppTunnel.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
