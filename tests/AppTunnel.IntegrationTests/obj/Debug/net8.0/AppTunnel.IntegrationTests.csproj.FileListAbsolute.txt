@@ -99,3 +99,4 @@ C:\Users\fungk\Desktop\GitHub\App Tunnel\tests\AppTunnel.IntegrationTests\obj\De
 C:\Users\fungk\Desktop\GitHub\App Tunnel\tests\AppTunnel.IntegrationTests\obj\Debug\net8.0\AppTunnel.IntegrationTests.pdb
 C:\Users\fungk\Desktop\GitHub\App Tunnel\tests\AppTunnel.IntegrationTests\obj\Debug\net8.0\AppTunnel.IntegrationTests.genruntimeconfig.cache
 C:\Users\fungk\Desktop\GitHub\App Tunnel\tests\AppTunnel.IntegrationTests\obj\Debug\net8.0\ref\AppTunnel.IntegrationTests.dll
+C:\Users\fungk\Desktop\GitHub\App Tunnel\tests\AppTunnel.IntegrationTests\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll

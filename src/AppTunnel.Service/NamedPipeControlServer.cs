@@ -103,6 +103,8 @@ public sealed class NamedPipeControlServer(
                 await controlService.PingAsync(cancellationToken)),
             AppTunnelControlCommand.GetOverview => AppTunnelControlResponse.FromOverview(
                 await controlService.GetOverviewAsync(cancellationToken)),
+            AppTunnelControlCommand.ExportLogBundle => AppTunnelControlResponse.FromLogBundle(
+                await controlService.ExportLogBundleAsync(request.DestinationDirectory, cancellationToken)),
             _ => AppTunnelControlResponse.Failed("unknown_command", $"Unsupported command '{request.Command}'."),
         };
     }

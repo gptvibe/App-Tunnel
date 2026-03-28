@@ -4,7 +4,7 @@ namespace AppTunnel.Core.Contracts;
 
 public interface ITunnelEngine
 {
-    VpnProviderKind ProviderKind { get; }
+    TunnelKind TunnelKind { get; }
 
     string DisplayName { get; }
 

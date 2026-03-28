@@ -1,0 +1,46 @@
+<UserControl x:Class="AppTunnel.UI.Views.LogsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="0,12,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Style="{StaticResource ShellCardStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource ShellTitleStyle}" Text="Structured Logs" />
+                    <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Recent log entries surfaced by the service." />
+                </StackPanel>
+                <Button Grid.Column="1"
+                        Style="{StaticResource ShellAccentButtonStyle}"
+                        Content="Export Bundle"
+                        Command="{Binding ExportLogsCommand}"
+                        VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1" Style="{StaticResource ShellCardStyle}">
+            <ListView ItemsSource="{Binding Logs}" Background="Transparent" BorderThickness="0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,12" Padding="16" Background="{StaticResource SurfaceMutedBrush}" CornerRadius="16">
+                            <StackPanel>
+                                <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="18" Text="{Binding TimestampUtc}" />
+                                <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding Level}" />
+                                <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding Source}" />
+                                <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding Message}" />
+                                <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding Properties}" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+    </Grid>
+</UserControl>

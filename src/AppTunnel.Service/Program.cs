@@ -1,8 +1,9 @@
 using AppTunnel.Core.Contracts;
+using AppTunnel.Core.Security;
 using AppTunnel.Core.Services;
 using AppTunnel.Router.WinDivert;
 using AppTunnel.Service;
-using AppTunnel.Service.Security;
+using AppTunnel.Service.Runtime;
 using AppTunnel.Vpn.OpenVpn;
 using AppTunnel.Vpn.WireGuard;
 
@@ -10,20 +11,39 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddWindowsService(options =>
 {
-	options.ServiceName = "App Tunnel Service";
+    options.ServiceName = "App Tunnel Service";
 });
 
+builder.Logging.ClearProviders();
 builder.Logging.AddJsonConsole(options =>
 {
-	options.IncludeScopes = true;
-	options.TimestampFormat = "O";
+    options.IncludeScopes = true;
+    options.TimestampFormat = "O";
 });
 
+var configuredRootDirectory = builder.Configuration["AppTunnel:RootDirectory"];
+var appTunnelPaths = new AppTunnelPaths(
+    string.IsNullOrWhiteSpace(configuredRootDirectory)
+        ? AppTunnelPaths.GetDefaultRootDirectory()
+        : configuredRootDirectory);
+
+builder.Services.AddSingleton(appTunnelPaths);
+builder.Services.AddSingleton<IAppTunnelConfigurationStore, JsonAppTunnelConfigurationStore>();
+builder.Services.AddSingleton<IStructuredLogService>(serviceProvider =>
+    new StructuredLogService(serviceProvider.GetRequiredService<AppTunnelPaths>(), "service"));
+builder.Services.AddSingleton<IDpapiProtector, DpapiProtectedData>();
+builder.Services.AddSingleton<ISecretStore, DpapiSecretStore>();
+builder.Services.AddSingleton<ILogBundleExporter, LogBundleExporter>();
 builder.Services.AddSingleton<ITunnelEngine, WireGuardTunnelEngine>();
 builder.Services.AddSingleton<ITunnelEngine, OpenVpnTunnelEngine>();
 builder.Services.AddSingleton<IRouterBackend, WinDivertRouterBackend>();
-builder.Services.AddSingleton<ISecretStore, DpapiSecretStore>();
-builder.Services.AddSingleton<IAppTunnelControlService, InMemoryAppTunnelControlService>();
+builder.Services.AddSingleton<DryRunTunnelManager>();
+builder.Services.AddSingleton<DryRunRouterManager>();
+builder.Services.AddSingleton<AppTunnelRuntime>();
+builder.Services.AddSingleton<IAppTunnelControlService>(serviceProvider =>
+    serviceProvider.GetRequiredService<AppTunnelRuntime>());
+builder.Services.AddHostedService(serviceProvider =>
+    serviceProvider.GetRequiredService<AppTunnelRuntime>());
 builder.Services.AddHostedService<NamedPipeControlServer>();
 
 var host = builder.Build();

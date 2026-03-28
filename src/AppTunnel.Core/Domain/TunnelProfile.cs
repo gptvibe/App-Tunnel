@@ -5,9 +5,10 @@ public sealed record TunnelProfile
     public TunnelProfile(
         Guid id,
         string displayName,
-        VpnProviderKind providerKind,
+        TunnelKind tunnelKind,
         string importedConfigPath,
         string? secretReferenceId,
+        bool isEnabled,
         DateTimeOffset importedAtUtc)
     {
         if (id == Guid.Empty)
@@ -27,9 +28,10 @@ public sealed record TunnelProfile
 
         Id = id;
         DisplayName = displayName;
-        ProviderKind = providerKind;
+        TunnelKind = tunnelKind;
         ImportedConfigPath = importedConfigPath;
         SecretReferenceId = secretReferenceId;
+        IsEnabled = isEnabled;
         ImportedAtUtc = importedAtUtc;
     }
 
@@ -37,11 +39,13 @@ public sealed record TunnelProfile
 
     public string DisplayName { get; }
 
-    public VpnProviderKind ProviderKind { get; }
+    public TunnelKind TunnelKind { get; }
 
     public string ImportedConfigPath { get; }
 
     public string? SecretReferenceId { get; }
+
+    public bool IsEnabled { get; }
 
     public DateTimeOffset ImportedAtUtc { get; }
 }

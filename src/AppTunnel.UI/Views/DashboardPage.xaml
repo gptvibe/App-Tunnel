@@ -1,0 +1,63 @@
+<UserControl x:Class="AppTunnel.UI.Views.DashboardPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="0,12,0,0">
+            <Border Style="{StaticResource ShellCardStyle}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource ShellTitleStyle}" Text="Health" />
+                    <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding ConnectionDetail}" />
+                    <UniformGrid Columns="3" Margin="0,16,0,0">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Service version" />
+                            <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="18" Text="{Binding ServiceVersion}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Routing backend" />
+                            <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="18" Text="{Binding ActiveRoutingBackend}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Export status" />
+                            <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="18" Text="{Binding LastExportedAtUtc}" />
+                        </StackPanel>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource ShellCardStyle}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource ShellTitleStyle}" Text="Counters" />
+                    <UniformGrid Columns="3" Margin="0,8,0,0">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Profiles" />
+                            <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="26" Text="{Binding ProfileCount}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource ShellBodyStyle}" Text="App rules" />
+                            <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="26" Text="{Binding AppRuleCount}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Recent logs" />
+                            <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="26" Text="{Binding LogCount}" />
+                        </StackPanel>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource ShellCardStyle}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource ShellTitleStyle}" Text="Known Gaps" />
+                    <ItemsControl ItemsSource="{Binding KnownGaps}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,8" Padding="10,8" Background="{StaticResource SurfaceMutedBrush}" CornerRadius="14">
+                                    <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding}" />
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

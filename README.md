@@ -24,29 +24,29 @@ dotnet restore .\AppTunnel.sln
 dotnet build .\AppTunnel.sln
 ```
 
-If the machine has .NET 8 targeting packs but only newer shared runtimes installed, test execution can use runtime roll-forward:
+Run the unit tests after the build:
 
 ```powershell
-$env:DOTNET_ROLL_FORWARD='LatestMajor'
-$env:DOTNET_ROLL_FORWARD_TO_PRERELEASE='1'
 dotnet test .\AppTunnel.sln --no-build
 ```
 
-## Run the scaffold in development
+## Run Locally
 
-Run the service first in a terminal:
+Run the Windows Service host first in a terminal:
 
 ```powershell
 dotnet run --project .\src\AppTunnel.Service\AppTunnel.Service.csproj
 ```
 
-Run the UI second:
+Then start the WPF UI in a second terminal:
 
 ```powershell
 dotnet run --project .\src\AppTunnel.UI\AppTunnel.UI.csproj
 ```
 
-The current UI performs a named-pipe handshake and renders service capability data. It does not yet import profiles, launch VPN engines, or apply packet-routing policy.
+The UI should show the service connection state in the dashboard shell. The service should stay running with its named-pipe IPC host active. If the service is not running yet, the UI will show a disconnected state until the pipe becomes available.
+
+For the current scaffold, the service uses dry-run tunnel and router managers, DPAPI-backed secret storage, configuration persistence, and structured log export wiring without touching live VPN or routing state.
 
 ## Documentation
 
@@ -62,8 +62,5 @@ The current UI performs a named-pipe handshake and renders service capability da
 
 - No real WireGuard or OpenVPN session management yet
 - No WinDivert interception or WFP driver implementation yet
-- No persistent storage for apps, profiles, or assignments yet
 - No hardened named-pipe ACL model for service-to-user communication yet
 - No installer or portable cleanup utility yet
-- No structured log export bundle implementation yet
-

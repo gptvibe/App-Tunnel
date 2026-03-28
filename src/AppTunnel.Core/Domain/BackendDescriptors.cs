@@ -1,13 +1,13 @@
 namespace AppTunnel.Core.Domain;
 
 public sealed record TunnelEngineStatus(
-    VpnProviderKind ProviderKind,
+    TunnelKind TunnelKind,
     string DisplayName,
     BackendReadiness Readiness,
     string Notes);
 
 public sealed record RouterBackendStatus(
-    RouterBackendKind BackendKind,
+    RoutingBackendKind BackendKind,
     string DisplayName,
     BackendReadiness Readiness,
     string Notes);

@@ -1,6 +1,10 @@
+using AppTunnel.Core.Domain;
+
 namespace AppTunnel.Core.Contracts;
 
 public interface ILogBundleExporter
 {
-    Task<string> ExportAsync(string destinationDirectory, CancellationToken cancellationToken);
+    Task<ExportedLogBundle> ExportAsync(
+        string? destinationDirectory,
+        CancellationToken cancellationToken);
 }

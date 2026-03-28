@@ -1,6 +1,7 @@
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Core\bin\Debug\net8.0\AppTunnel.Core.deps.json
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Core\bin\Debug\net8.0\AppTunnel.Core.dll
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Core\bin\Debug\net8.0\AppTunnel.Core.pdb
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Core\obj\Debug\net8.0\AppTunnel.Core.csproj.AssemblyReference.cache
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Core\obj\Debug\net8.0\AppTunnel.Core.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Core\obj\Debug\net8.0\AppTunnel.Core.AssemblyInfoInputs.cache
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Core\obj\Debug\net8.0\AppTunnel.Core.AssemblyInfo.cs

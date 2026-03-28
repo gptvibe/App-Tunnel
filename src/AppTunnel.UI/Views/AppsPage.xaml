@@ -1,0 +1,34 @@
+<UserControl x:Class="AppTunnel.UI.Views.AppsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="0,12,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Style="{StaticResource ShellCardStyle}">
+            <StackPanel>
+                <TextBlock Style="{StaticResource ShellTitleStyle}" Text="App Rules" />
+                <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Executable-to-profile assignments used by the dry-run router." />
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" Style="{StaticResource ShellCardStyle}">
+            <ListView ItemsSource="{Binding AppRules}" Background="Transparent" BorderThickness="0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,0,0,12" Padding="16" Background="{StaticResource SurfaceMutedBrush}" CornerRadius="16">
+                            <StackPanel>
+                                <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="19" Text="{Binding DisplayName}" />
+                                <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding ExecutablePath}" />
+                                <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding Status}" />
+                                <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding UpdatedAtUtc, StringFormat=Updated {0}}" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+    </Grid>
+</UserControl>

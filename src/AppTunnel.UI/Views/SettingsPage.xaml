@@ -1,0 +1,51 @@
+<UserControl x:Class="AppTunnel.UI.Views.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="0,12,0,0">
+            <Border Style="{StaticResource ShellCardStyle}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource ShellTitleStyle}" Text="Service Settings" />
+                    <UniformGrid Columns="2" Margin="0,8,0,0">
+                        <StackPanel Margin="0,0,16,12">
+                            <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Pipe name" />
+                            <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="18" Text="{Binding PipeName}" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,12">
+                            <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Preferred routing backend" />
+                            <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="18" Text="{Binding PreferredRoutingBackend}" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,12">
+                            <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Data root" />
+                            <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="18" Text="{Binding DataRootDirectory}" TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Margin="0,0,16,12">
+                            <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Logs directory" />
+                            <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="18" Text="{Binding LogsDirectory}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource ShellCardStyle}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource ShellTitleStyle}" Text="Exports" />
+                    <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Current export path and the last bundle written by the service." />
+                    <TextBlock Margin="0,12,0,0" Style="{StaticResource ShellBodyStyle}" Text="Exports directory" />
+                    <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="18" Text="{Binding ExportsDirectory}" TextWrapping="Wrap" />
+                    <TextBlock Margin="0,12,0,0" Style="{StaticResource ShellBodyStyle}" Text="Last export bundle" />
+                    <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="18" Text="{Binding LastExportBundlePath}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource ShellCardStyle}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource ShellTitleStyle}" Text="Session" />
+                    <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding SessionState}" />
+                    <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding ActiveRoutingBackend}" />
+                    <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding LastError}" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

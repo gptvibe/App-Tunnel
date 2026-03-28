@@ -1,8 +1,9 @@
-﻿<Application x:Class="AppTunnel.UI.App"
+<Application x:Class="AppTunnel.UI.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             ShutdownMode="OnMainWindowClose">
+             ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
+        <FontFamily x:Key="HeadingFont">Bahnschrift SemiCondensed</FontFamily>
         <Color x:Key="BackgroundColor">#FF101721</Color>
         <Color x:Key="SurfaceColor">#FF18212E</Color>
         <Color x:Key="SurfaceMutedColor">#FF212C3B</Color>
@@ -18,5 +19,42 @@
         <SolidColorBrush x:Key="AccentSoftBrush" Color="{StaticResource AccentSoftColor}" />
         <SolidColorBrush x:Key="TextStrongBrush" Color="{StaticResource TextStrongColor}" />
         <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMutedColor}" />
+
+        <Style x:Key="ShellCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+            <Setter Property="CornerRadius" Value="22" />
+            <Setter Property="Padding" Value="20" />
+            <Setter Property="Margin" Value="0,0,0,16" />
+        </Style>
+
+        <Style x:Key="ShellTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource HeadingFont}" />
+            <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+
+        <Style x:Key="ShellBodyStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <Style x:Key="ShellAccentButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+            <Setter Property="Padding" Value="16,9" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style x:Key="ShellGhostButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource SurfaceMutedBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource SurfaceMutedBrush}" />
+            <Setter Property="Padding" Value="16,9" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
     </Application.Resources>
 </Application>

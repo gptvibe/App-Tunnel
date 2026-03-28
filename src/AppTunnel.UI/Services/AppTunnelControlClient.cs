@@ -21,6 +21,17 @@ public sealed class AppTunnelControlClient
         return response.Overview ?? throw new InvalidOperationException("The service did not return an overview payload.");
     }
 
+    public async Task<ExportedLogBundle> ExportLogBundleAsync(
+        string? destinationDirectory = null,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+            AppTunnelControlRequest.CreateExportLogBundle(destinationDirectory),
+            cancellationToken);
+
+        return response.LogBundle ?? throw new InvalidOperationException("The service did not return a log bundle payload.");
+    }
+
     private static async Task<AppTunnelControlResponse> SendAsync(
         AppTunnelControlRequest request,
         CancellationToken cancellationToken)

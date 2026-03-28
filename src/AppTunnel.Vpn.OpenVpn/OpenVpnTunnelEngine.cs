@@ -5,11 +5,11 @@ namespace AppTunnel.Vpn.OpenVpn;
 
 public sealed class OpenVpnTunnelEngine : ITunnelEngine
 {
-    public VpnProviderKind ProviderKind => VpnProviderKind.OpenVpn;
+    public TunnelKind TunnelKind => TunnelKind.OpenVpn;
 
     public string DisplayName => "OpenVPN";
 
-    public BackendReadiness Readiness => BackendReadiness.Planned;
+    public BackendReadiness Readiness => BackendReadiness.DryRun;
 
     public Task<TunnelProfile> ImportProfileAsync(ProfileImportRequest request, CancellationToken cancellationToken)
     {
@@ -23,15 +23,14 @@ public sealed class OpenVpnTunnelEngine : ITunnelEngine
         return Task.FromResult(new TunnelProfile(
             Guid.NewGuid(),
             request.DisplayName,
-            ProviderKind,
+            TunnelKind,
             request.SourcePath,
             secretReferenceId: null,
+            isEnabled: true,
             importedAtUtc: DateTimeOffset.UtcNow));
     }
 
-    public Task ConnectAsync(Guid profileId, CancellationToken cancellationToken) =>
-        throw new NotImplementedException("TODO: Launch and supervise OpenVPN processes.");
+    public Task ConnectAsync(Guid profileId, CancellationToken cancellationToken) => Task.CompletedTask;
 
-    public Task DisconnectAsync(Guid profileId, CancellationToken cancellationToken) =>
-        throw new NotImplementedException("TODO: Tear down OpenVPN sessions and routes.");
+    public Task DisconnectAsync(Guid profileId, CancellationToken cancellationToken) => Task.CompletedTask;
 }

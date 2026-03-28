@@ -6,16 +6,17 @@ public enum AppKind
     PackagedApp,
 }
 
-public enum VpnProviderKind
+public enum TunnelKind
 {
     WireGuard,
     OpenVpn,
 }
 
-public enum RouterBackendKind
+public enum RoutingBackendKind
 {
-    MvpRouter,
-    ProdRouter,
+    DryRun,
+    WinDivert,
+    Wfp,
 }
 
 public enum DistributionMode
@@ -27,6 +28,7 @@ public enum DistributionMode
 public enum BackendReadiness
 {
     Planned,
+    DryRun,
     Mvp,
     ProductionReady,
 }
@@ -36,4 +38,13 @@ public enum SecretPurpose
     WireGuardPrivateKey,
     OpenVpnCredentials,
     ProfileBlob,
+}
+
+public enum ServiceRunState
+{
+    Starting,
+    Running,
+    Stopping,
+    Stopped,
+    Faulted,
 }

@@ -4,7 +4,7 @@ namespace AppTunnel.Core.Contracts;
 
 public interface IRouterBackend
 {
-    RouterBackendKind Kind { get; }
+    RoutingBackendKind Kind { get; }
 
     string DisplayName { get; }
 

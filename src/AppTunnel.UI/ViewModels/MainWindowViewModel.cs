@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using AppTunnel.Core.Domain;
 using AppTunnel.UI.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -12,27 +13,61 @@ public partial class MainWindowViewModel(AppTunnelControlClient controlClient) :
     private string serviceStatus = "Waiting for service handshake";
 
     [ObservableProperty]
+    private string serviceRunState = "Unknown";
+
+    [ObservableProperty]
     private string protocolVersion = "Unavailable";
 
     [ObservableProperty]
     private string lastHandshakeUtc = "No handshake yet";
 
     [ObservableProperty]
-    private string distributionMode = "Unknown";
-
-    [ObservableProperty]
-    private string preferredRouter = "Unknown";
-
-    [ObservableProperty]
     private string lastError = "None";
 
-    public ObservableCollection<string> SupportedAppKinds { get; } = [];
+    [ObservableProperty]
+    private string preferredRoutingBackend = "Unknown";
 
-    public ObservableCollection<string> PlannedAppKinds { get; } = [];
+    [ObservableProperty]
+    private string tunnelManagerState = "Unavailable";
 
-    public ObservableCollection<string> SupportedProfileKinds { get; } = [];
+    [ObservableProperty]
+    private string routerManagerState = "Unavailable";
 
-    public ObservableCollection<string> PlannedProfileKinds { get; } = [];
+    [ObservableProperty]
+    private string startedAtUtc = "Unavailable";
+
+    [ObservableProperty]
+    private string loadedProfilesSummary = "0 profile(s) loaded";
+
+    [ObservableProperty]
+    private string loadedRulesSummary = "0 app rule(s) loaded";
+
+    [ObservableProperty]
+    private string dataRootDirectory = "Unavailable";
+
+    [ObservableProperty]
+    private string configurationFilePath = "Unavailable";
+
+    [ObservableProperty]
+    private string logsDirectory = "Unavailable";
+
+    [ObservableProperty]
+    private string exportsDirectory = "Unavailable";
+
+    [ObservableProperty]
+    private string pipeName = "Unavailable";
+
+    [ObservableProperty]
+    private string refreshIntervalSeconds = "Unavailable";
+
+    [ObservableProperty]
+    private string lastExportPath = "No bundle exported yet";
+
+    public ObservableCollection<TunnelProfile> Profiles { get; } = [];
+
+    public ObservableCollection<AppRule> AppRules { get; } = [];
+
+    public ObservableCollection<StructuredLogEntry> RecentLogs { get; } = [];
 
     public ObservableCollection<string> TunnelEngines { get; } = [];
 
@@ -51,16 +86,26 @@ public partial class MainWindowViewModel(AppTunnelControlClient controlClient) :
             var overview = await controlClient.GetOverviewAsync();
 
             ServiceStatus = "Connected to App Tunnel Service";
+            ServiceRunState = ping.RunState.ToString();
             ProtocolVersion = ping.ProtocolVersion;
-            LastHandshakeUtc = ping.TimestampUtc.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss");
-            DistributionMode = overview.DistributionMode.ToString();
-            PreferredRouter = overview.PreferredRouter.ToString();
+            LastHandshakeUtc = ping.TimestampUtc.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
             LastError = "None";
+            PreferredRoutingBackend = overview.Settings.PreferredRoutingBackend.ToString();
+            TunnelManagerState = overview.SessionState.TunnelManagerState;
+            RouterManagerState = overview.SessionState.RouterManagerState;
+            StartedAtUtc = overview.SessionState.StartedAtUtc.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            LoadedProfilesSummary = $"{overview.SessionState.LoadedProfileCount} profile(s) loaded";
+            LoadedRulesSummary = $"{overview.SessionState.LoadedAppRuleCount} app rule(s) loaded";
+            DataRootDirectory = overview.Storage.RootDirectory;
+            ConfigurationFilePath = overview.Storage.ConfigurationFilePath;
+            LogsDirectory = overview.Storage.LogsDirectory;
+            ExportsDirectory = overview.Storage.ExportsDirectory;
+            PipeName = overview.Settings.PipeName;
+            RefreshIntervalSeconds = overview.Settings.RefreshIntervalSeconds.ToString(CultureInfo.InvariantCulture);
 
-            ReplaceItems(SupportedAppKinds, overview.SupportedAppKinds.Select(kind => kind.ToString()));
-            ReplaceItems(PlannedAppKinds, overview.PlannedAppKinds.Select(kind => kind.ToString()));
-            ReplaceItems(SupportedProfileKinds, overview.SupportedProfileKinds.Select(kind => kind.ToString()));
-            ReplaceItems(PlannedProfileKinds, overview.PlannedProfileKinds.Select(kind => kind.ToString()));
+            ReplaceItems(Profiles, overview.Profiles.OrderBy(profile => profile.DisplayName));
+            ReplaceItems(AppRules, overview.AppRules.OrderBy(rule => rule.DisplayName));
+            ReplaceItems(RecentLogs, overview.RecentLogs.OrderByDescending(entry => entry.TimestampUtc));
             ReplaceItems(TunnelEngines, overview.TunnelEngines.Select(DescribeTunnelEngine));
             ReplaceItems(RouterBackends, overview.RouterBackends.Select(DescribeRouter));
             ReplaceItems(KnownGaps, overview.KnownGaps);
@@ -68,23 +113,50 @@ public partial class MainWindowViewModel(AppTunnelControlClient controlClient) :
         catch (Exception ex)
         {
             ServiceStatus = "Service unreachable";
+            ServiceRunState = "Unavailable";
             ProtocolVersion = "Unavailable";
             LastHandshakeUtc = "Failed";
-            DistributionMode = "Unavailable";
-            PreferredRouter = "Unavailable";
+            PreferredRoutingBackend = "Unavailable";
+            TunnelManagerState = "Unavailable";
+            RouterManagerState = "Unavailable";
+            StartedAtUtc = "Unavailable";
+            LoadedProfilesSummary = "0 profile(s) loaded";
+            LoadedRulesSummary = "0 app rule(s) loaded";
+            DataRootDirectory = "Unavailable";
+            ConfigurationFilePath = "Unavailable";
+            LogsDirectory = "Unavailable";
+            ExportsDirectory = "Unavailable";
+            PipeName = "Unavailable";
+            RefreshIntervalSeconds = "Unavailable";
             LastError = ex.Message;
 
-            ReplaceItems(SupportedAppKinds, []);
-            ReplaceItems(PlannedAppKinds, []);
-            ReplaceItems(SupportedProfileKinds, []);
-            ReplaceItems(PlannedProfileKinds, []);
+            ReplaceItems(Profiles, []);
+            ReplaceItems(AppRules, []);
+            ReplaceItems(RecentLogs, []);
             ReplaceItems(TunnelEngines, []);
             ReplaceItems(RouterBackends, []);
             ReplaceItems(KnownGaps, []);
         }
     }
 
-    private static void ReplaceItems(ObservableCollection<string> collection, IEnumerable<string> values)
+    [RelayCommand]
+    private async Task ExportLogsAsync()
+    {
+        try
+        {
+            var bundle = await controlClient.ExportLogBundleAsync();
+            LastExportPath = $"Exported bundle: {bundle.BundlePath}";
+            LastError = "None";
+            await RefreshAsync();
+        }
+        catch (Exception ex)
+        {
+            LastError = ex.Message;
+            LastExportPath = "Export failed";
+        }
+    }
+
+    private static void ReplaceItems<T>(ObservableCollection<T> collection, IEnumerable<T> values)
     {
         collection.Clear();
 
