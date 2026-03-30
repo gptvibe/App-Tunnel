@@ -8,6 +8,28 @@ public sealed record PingReply(
 
 public sealed record ProfileImportRequest(string DisplayName, string SourcePath);
 
+public sealed record AppRuleCreateRequest(
+    AppKind AppKind,
+    string? DisplayName,
+    string? ExecutablePath,
+    string? PackageFamilyName,
+    string? PackageIdentity);
+
+public sealed record AppRuleUpdateRequest(
+    Guid RuleId,
+    Guid? ProfileId,
+    bool IsEnabled,
+    bool LaunchOnConnect,
+    bool KillAppTrafficOnTunnelDrop,
+    bool IncludeChildProcesses);
+
+public sealed record DiscoveredApplication(
+    AppKind AppKind,
+    string DisplayName,
+    string? ExecutablePath,
+    string? PackageFamilyName,
+    string? PackageIdentity);
+
 public sealed record RoutingPlan(Guid ProfileId, IReadOnlyList<Guid> AppRuleIds);
 
 public sealed record StoredSecretReference(
@@ -48,6 +70,15 @@ public sealed record AppTunnelConfiguration(
     IReadOnlyList<AppRule> AppRules,
     AppTunnelSettings Settings);
 
+public sealed record TunnelStatusSnapshot(
+    Guid ProfileId,
+    TunnelConnectionState State,
+    string Summary,
+    string? ErrorMessage,
+    string BackendName,
+    bool IsMock,
+    DateTimeOffset UpdatedAtUtc);
+
 public sealed record ServiceOverview(
     DateTimeOffset GeneratedAtUtc,
     string ServiceVersion,
@@ -57,6 +88,7 @@ public sealed record ServiceOverview(
     IReadOnlyList<TunnelEngineStatus> TunnelEngines,
     IReadOnlyList<RouterBackendStatus> RouterBackends,
     IReadOnlyList<TunnelProfile> Profiles,
+    IReadOnlyList<TunnelStatusSnapshot> TunnelStatuses,
     IReadOnlyList<AppRule> AppRules,
     IReadOnlyList<StructuredLogEntry> RecentLogs,
     IReadOnlyList<string> KnownGaps);

@@ -91,7 +91,7 @@
                     <TextBlock Margin="0,8,0,0"
                                Style="{StaticResource BodyStyle}"
                                FontSize="16"
-                               Text="Initial scaffold for app-scoped tunnel profiles, dry-run routing, named-pipe IPC, DPAPI secret storage, and structured diagnostics." />
+                               Text="WireGuard-first control surface for importing .conf profiles, persisting protected secrets, and managing tunnel lifecycle through the Windows service." />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1"
@@ -106,9 +106,13 @@
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Right"
                                 Margin="0,14,0,0">
+                        <Button Content="Import WireGuard"
+                            Style="{StaticResource ActionButtonStyle}"
+                            Command="{Binding ImportWireGuardProfileCommand}" />
                         <Button Content="Refresh"
                                 Style="{StaticResource ActionButtonStyle}"
-                                Command="{Binding RefreshCommand}" />
+                            Margin="12,0,0,0"
+                            Command="{Binding RefreshCommand}" />
                         <Button Content="Export Logs"
                                 Style="{StaticResource ActionButtonStyle}"
                                 Margin="12,0,0,0"
@@ -218,19 +222,136 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <TextBlock Style="{StaticResource BodyStyle}"
-                               Margin="0,0,0,12"
-                               Text="Profiles are loaded by the service from the persisted JSON scaffold configuration." />
-                    <DataGrid Grid.Row="1"
-                              ItemsSource="{Binding Profiles}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding DisplayName}" Width="2*" />
-                            <DataGridTextColumn Header="Tunnel" Binding="{Binding TunnelKind}" Width="*" />
-                            <DataGridTextColumn Header="Config Path" Binding="{Binding ImportedConfigPath}" Width="3*" />
-                            <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled}" Width="*" />
-                            <DataGridTextColumn Header="Imported" Binding="{Binding ImportedAtUtc, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" Width="2*" />
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <StackPanel Margin="0,0,0,12">
+                        <TextBlock Style="{StaticResource BodyStyle}"
+                                   Text="Import WireGuard .conf files only. The service stores metadata in app configuration and protects private key material with DPAPI." />
+                        <TextBlock Margin="0,8,0,0"
+                                   Style="{StaticResource BodyStyle}"
+                                   Text="{Binding ProfileActionMessage}" />
+                    </StackPanel>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="18" />
+                            <ColumnDefinition Width="3*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+
+                                <StackPanel>
+                                    <TextBlock Text="Imported Profiles" Style="{StaticResource SectionHeaderStyle}" />
+                                    <TextBlock Style="{StaticResource BodyStyle}" Text="Select a profile to inspect parsed details and current tunnel state." />
+                                </StackPanel>
+
+                                <ListView Grid.Row="1"
+                                          Margin="0,16,0,0"
+                                          Background="Transparent"
+                                          BorderThickness="0"
+                                          ItemsSource="{Binding Profiles}"
+                                          SelectedItem="{Binding SelectedProfile}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0,0,0,12"
+                                                    Padding="16"
+                                                    Background="{StaticResource SurfaceMutedBrush}"
+                                                    CornerRadius="16">
+                                                <StackPanel>
+                                                    <DockPanel>
+                                                        <TextBlock DockPanel.Dock="Left"
+                                                                   FontFamily="{StaticResource HeadingFont}"
+                                                                   FontSize="20"
+                                                                   Text="{Binding DisplayName}" />
+                                                        <TextBlock DockPanel.Dock="Right"
+                                                                   HorizontalAlignment="Right"
+                                                                   Foreground="{StaticResource TextMutedBrush}"
+                                                                   Text="{Binding ConnectionState}" />
+                                                    </DockPanel>
+                                                    <TextBlock Margin="0,4,0,0"
+                                                               Style="{StaticResource BodyStyle}"
+                                                               Text="{Binding ConnectionSummary}" />
+                                                    <TextBlock Margin="0,8,0,0"
+                                                               Style="{StaticResource BodyStyle}"
+                                                               Text="{Binding Addresses}" />
+                                                    <TextBlock Margin="0,4,0,0"
+                                                               Style="{StaticResource BodyStyle}"
+                                                               Text="{Binding BackendName}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Column="2" Style="{StaticResource CardBorderStyle}">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding SelectedProfile.DisplayName, TargetNullValue=No profile selected}"
+                                               Style="{StaticResource SectionHeaderStyle}" />
+                                    <TextBlock Style="{StaticResource BodyStyle}"
+                                               Text="{Binding SelectedProfile.ConnectionSummary, TargetNullValue=Import a WireGuard profile to view details.}" />
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
+                                        <Button Content="Connect"
+                                                Style="{StaticResource ActionButtonStyle}"
+                                                Command="{Binding ConnectProfileCommand}" />
+                                        <Button Content="Disconnect"
+                                                Style="{StaticResource ShellGhostButtonStyle}"
+                                                Margin="12,0,0,0"
+                                                Command="{Binding DisconnectProfileCommand}" />
+                                    </StackPanel>
+
+                                    <Border Margin="0,18,0,0"
+                                            Padding="14"
+                                            Background="{StaticResource SurfaceMutedBrush}"
+                                            CornerRadius="14">
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource BodyStyle}" Text="Live status" />
+                                            <TextBlock FontSize="18"
+                                                       Text="{Binding SelectedProfile.ConnectionState, TargetNullValue=Unavailable}" />
+                                            <TextBlock Margin="0,8,0,0"
+                                                       Style="{StaticResource BodyStyle}"
+                                                       Text="{Binding SelectedProfile.BackendName, TargetNullValue=Unavailable}" />
+                                            <TextBlock Margin="0,4,0,0"
+                                                       Style="{StaticResource BodyStyle}"
+                                                       Text="{Binding SelectedProfile.LastStatusUpdateUtc, StringFormat=Updated {0}, TargetNullValue=Unavailable}" />
+                                            <TextBlock Margin="0,8,0,0"
+                                                       Style="{StaticResource BodyStyle}"
+                                                       Text="{Binding SelectedProfile.ErrorMessage, StringFormat=Error: {0}, TargetNullValue=None}" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Margin="0,18,0,0"
+                                            Padding="14"
+                                            Background="{StaticResource SurfaceMutedBrush}"
+                                            CornerRadius="14">
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource BodyStyle}" Text="WireGuard details" />
+                                            <TextBlock Margin="0,8,0,0" Text="Interface" Style="{StaticResource BodyStyle}" />
+                                            <TextBlock FontSize="16" Text="{Binding SelectedProfile.InterfaceName, TargetNullValue=Unavailable}" />
+                                            <TextBlock Margin="0,12,0,0" Text="Addresses" Style="{StaticResource BodyStyle}" />
+                                            <TextBlock FontSize="16" Text="{Binding SelectedProfile.Addresses, TargetNullValue=Unavailable}" TextWrapping="Wrap" />
+                                            <TextBlock Margin="0,12,0,0" Text="DNS" Style="{StaticResource BodyStyle}" />
+                                            <TextBlock FontSize="16" Text="{Binding SelectedProfile.DnsServers, TargetNullValue=None}" TextWrapping="Wrap" />
+                                            <TextBlock Margin="0,12,0,0" Text="Peers" Style="{StaticResource BodyStyle}" />
+                                            <TextBlock FontSize="16" Text="{Binding SelectedProfile.PeerSummary, TargetNullValue=0 peer(s)}" />
+                                            <TextBlock Margin="0,12,0,0" Text="Endpoints" Style="{StaticResource BodyStyle}" />
+                                            <TextBlock FontSize="16" Text="{Binding SelectedProfile.EndpointSummary, TargetNullValue=None}" TextWrapping="Wrap" />
+                                            <TextBlock Margin="0,12,0,0" Text="Imported from" Style="{StaticResource BodyStyle}" />
+                                            <TextBlock FontSize="16" Text="{Binding SelectedProfile.ImportedConfigPath, TargetNullValue=Unavailable}" TextWrapping="Wrap" />
+                                            <TextBlock Margin="0,12,0,0" Text="Imported at" Style="{StaticResource BodyStyle}" />
+                                            <TextBlock FontSize="16" Text="{Binding SelectedProfile.ImportedAtUtc, TargetNullValue=Unavailable}" />
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Border>
+                    </Grid>
                 </Grid>
             </TabItem>
 
@@ -240,19 +361,233 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <TextBlock Style="{StaticResource BodyStyle}"
-                               Margin="0,0,0,12"
-                               Text="App rules define which executable path is assigned to which tunnel profile in dry-run mode." />
-                    <DataGrid Grid.Row="1"
-                              ItemsSource="{Binding AppRules}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding DisplayName}" Width="2*" />
-                            <DataGridTextColumn Header="Executable Path" Binding="{Binding ExecutablePath}" Width="3*" />
-                            <DataGridTextColumn Header="Profile ID" Binding="{Binding ProfileId}" Width="2*" />
-                            <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled}" Width="*" />
-                            <DataGridTextColumn Header="Updated" Binding="{Binding UpdatedAtUtc, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" Width="2*" />
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource BodyStyle}"
+                                       Text="Win32 rules store normalized executable paths now and reserve packaged-app identity fields for future discovery." />
+                            <TextBlock Margin="0,8,0,0"
+                                       Style="{StaticResource BodyStyle}"
+                                       Text="{Binding AppActionMessage}" />
+                        </StackPanel>
+
+                        <Button Grid.Column="1"
+                                Content="Add Win32 App"
+                                Style="{StaticResource ActionButtonStyle}"
+                                Command="{Binding AddAppRuleCommand}" />
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="0,12,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="18" />
+                            <ColumnDefinition Width="3*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+
+                                <StackPanel>
+                                    <TextBlock Text="Apps List" Style="{StaticResource SectionHeaderStyle}" />
+                                    <TextBlock Style="{StaticResource BodyStyle}" Text="Each rule targets one app identity and stores assignment behavior even before live routing enforcement exists." />
+                                </StackPanel>
+
+                                <ListView Grid.Row="1"
+                                          Margin="0,16,0,0"
+                                          Background="Transparent"
+                                          BorderThickness="0"
+                                          ItemsSource="{Binding AppRules}"
+                                          SelectedItem="{Binding SelectedAppRule}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Margin="0,0,0,12"
+                                                    Padding="16"
+                                                    Background="{StaticResource SurfaceMutedBrush}"
+                                                    CornerRadius="16">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="12" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Border Width="56"
+                                                            Height="56"
+                                                            Background="{StaticResource SurfaceBrush}"
+                                                            CornerRadius="16">
+                                                        <Grid>
+                                                            <TextBlock HorizontalAlignment="Center"
+                                                                       VerticalAlignment="Center"
+                                                                       FontFamily="{StaticResource HeadingFont}"
+                                                                       FontSize="22"
+                                                                       Text="{Binding IconMonogram}" />
+                                                            <Image Width="28"
+                                                                   Height="28"
+                                                                   Stretch="Uniform"
+                                                                   Source="{Binding IconSource}" />
+                                                        </Grid>
+                                                    </Border>
+
+                                                    <StackPanel Grid.Column="2">
+                                                        <TextBlock FontFamily="{StaticResource HeadingFont}"
+                                                                   FontSize="20"
+                                                                   Text="{Binding DisplayName}" />
+                                                        <TextBlock Margin="0,4,0,0"
+                                                                   Style="{StaticResource BodyStyle}"
+                                                                   Text="{Binding TargetSummary}" />
+                                                        <TextBlock Margin="0,6,0,0"
+                                                                   Style="{StaticResource BodyStyle}"
+                                                                   Text="{Binding AssignedProfileDisplayName, StringFormat=Assigned to {0}}" />
+                                                    </StackPanel>
+
+                                                    <Border Grid.Column="3"
+                                                            Padding="10,4"
+                                                            CornerRadius="999"
+                                                            Background="{Binding StatusBadgeBrush}">
+                                                        <TextBlock Foreground="White"
+                                                                   FontWeight="SemiBold"
+                                                                   Text="{Binding StatusBadgeText}" />
+                                                    </Border>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Column="2" Style="{StaticResource CardBorderStyle}">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel>
+                                    <DockPanel>
+                                        <StackPanel DockPanel.Dock="Left">
+                                            <TextBlock Text="{Binding SelectedAppRule.DisplayName, TargetNullValue=No app selected}"
+                                                       Style="{StaticResource SectionHeaderStyle}" />
+                                            <TextBlock Style="{StaticResource BodyStyle}"
+                                                       Text="{Binding SelectedAppRule.StatusSummary, TargetNullValue=Add a Win32 .exe to create a new rule target.}" />
+                                        </StackPanel>
+                                        <Border DockPanel.Dock="Right"
+                                                Padding="10,4"
+                                                CornerRadius="999"
+                                                Background="{Binding SelectedAppRule.StatusBadgeBrush}"
+                                                Margin="12,0,0,0">
+                                            <TextBlock Foreground="White"
+                                                       FontWeight="SemiBold"
+                                                       Text="{Binding SelectedAppRule.StatusBadgeText, TargetNullValue=Idle}" />
+                                        </Border>
+                                    </DockPanel>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
+                                        <Button Content="Assign Profile"
+                                                Style="{StaticResource ActionButtonStyle}"
+                                                Command="{Binding AssignAppRuleCommand}" />
+                                    </StackPanel>
+
+                                    <Border Margin="0,18,0,0"
+                                            Padding="14"
+                                            Background="{StaticResource SurfaceMutedBrush}"
+                                            CornerRadius="14">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="16" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Border Width="74"
+                                                    Height="74"
+                                                    Background="{StaticResource SurfaceBrush}"
+                                                    CornerRadius="20">
+                                                <Grid>
+                                                    <TextBlock HorizontalAlignment="Center"
+                                                               VerticalAlignment="Center"
+                                                               FontFamily="{StaticResource HeadingFont}"
+                                                               FontSize="30"
+                                                               Text="{Binding SelectedAppRule.IconMonogram, TargetNullValue=A}" />
+                                                    <Image Width="36"
+                                                           Height="36"
+                                                           Stretch="Uniform"
+                                                           Source="{Binding SelectedAppRule.IconSource}" />
+                                                </Grid>
+                                            </Border>
+
+                                            <StackPanel Grid.Column="2">
+                                                <TextBlock Style="{StaticResource BodyStyle}" Text="App target" />
+                                                <TextBlock FontSize="16"
+                                                           Text="{Binding SelectedAppRule.AppKindLabel, TargetNullValue=Unavailable}" />
+                                                <TextBlock Margin="0,8,0,0"
+                                                           Style="{StaticResource BodyStyle}"
+                                                           Text="{Binding SelectedAppRule.TargetSummary, TargetNullValue=Unavailable}" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                    <Border Margin="0,18,0,0"
+                                            Padding="14"
+                                            Background="{StaticResource SurfaceMutedBrush}"
+                                            CornerRadius="14">
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource BodyStyle}" Text="Assignment" />
+                                            <TextBlock Margin="0,8,0,0"
+                                                       FontSize="16"
+                                                       Text="{Binding SelectedAppRule.AssignedProfileDisplayName, TargetNullValue=Unassigned}" />
+                                            <TextBlock Margin="0,12,0,0"
+                                                       Style="{StaticResource BodyStyle}"
+                                                       Text="{Binding SelectedAppRule.StatusSummary, TargetNullValue=No rule selected.}" />
+                                            <TextBlock Margin="0,12,0,0"
+                                                       Style="{StaticResource BodyStyle}"
+                                                       Text="{Binding SelectedAppRule.UpdatedAtUtc, StringFormat=Updated {0}, TargetNullValue=Unavailable}" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Margin="0,18,0,0"
+                                            Padding="14"
+                                            Background="{StaticResource SurfaceMutedBrush}"
+                                            CornerRadius="14">
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource BodyStyle}" Text="Rule settings" />
+                                            <TextBlock Margin="0,8,0,0"
+                                                       FontSize="16"
+                                                       Text="{Binding SelectedAppRule.IsEnabled, StringFormat=Enabled: {0}, TargetNullValue=Enabled: False}" />
+                                            <TextBlock Margin="0,8,0,0"
+                                                       FontSize="16"
+                                                       Text="{Binding SelectedAppRule.LaunchOnConnect, StringFormat=Launch on connect: {0}, TargetNullValue=Launch on connect: False}" />
+                                            <TextBlock Margin="0,8,0,0"
+                                                       FontSize="16"
+                                                       Text="{Binding SelectedAppRule.KillAppTrafficOnTunnelDrop, StringFormat=Kill app traffic on tunnel drop: {0}, TargetNullValue=Kill app traffic on tunnel drop: False}" />
+                                            <TextBlock Margin="0,8,0,0"
+                                                       FontSize="16"
+                                                       Text="{Binding SelectedAppRule.IncludeChildProcesses, StringFormat=Include child processes: {0}, TargetNullValue=Include child processes: False}" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Margin="0,18,0,0"
+                                            Padding="14"
+                                            Background="{StaticResource SurfaceMutedBrush}"
+                                            CornerRadius="14">
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource BodyStyle}" Text="Future packaged-app identity fields" />
+                                            <TextBlock Margin="0,8,0,0"
+                                                       FontSize="16"
+                                                       Text="{Binding SelectedAppRule.PackageFamilyName, StringFormat=Package family: {0}, TargetNullValue=Package family: Unavailable}" />
+                                            <TextBlock Margin="0,8,0,0"
+                                                       FontSize="16"
+                                                       Text="{Binding SelectedAppRule.PackageIdentity, StringFormat=Package identity: {0}, TargetNullValue=Package identity: Unavailable}" />
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Border>
+                    </Grid>
                 </Grid>
             </TabItem>
 

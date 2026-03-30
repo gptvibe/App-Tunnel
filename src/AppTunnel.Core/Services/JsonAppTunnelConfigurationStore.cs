@@ -52,32 +52,9 @@ public sealed class JsonAppTunnelConfigurationStore(AppTunnelPaths paths) : IApp
 
     private AppTunnelConfiguration CreateDefaultConfiguration()
     {
-        var sampleProfileId = Guid.Parse("C6F16E7B-3BF0-489A-8D49-31D4EECE7D0F");
-        var sampleRuleId = Guid.Parse("F8671028-0678-4B7A-9D31-C4DE2FAF9D5D");
-        var now = DateTimeOffset.UtcNow;
-
         return new AppTunnelConfiguration(
-            Profiles:
-            [
-                new TunnelProfile(
-                    sampleProfileId,
-                    "Sample WireGuard Profile",
-                    TunnelKind.WireGuard,
-                    @"C:\VPN\sample-wireguard.conf",
-                    secretReferenceId: null,
-                    isEnabled: true,
-                    importedAtUtc: now)
-            ],
-            AppRules:
-            [
-                new AppRule(
-                    sampleRuleId,
-                    "Notepad via Sample Tunnel",
-                    @"C:\Windows\System32\notepad.exe",
-                    sampleProfileId,
-                    isEnabled: true,
-                    updatedAtUtc: now)
-            ],
+            Profiles: [],
+            AppRules: [],
             Settings: new AppTunnelSettings(
                 AppTunnelPipeNames.Control,
                 RoutingBackendKind.DryRun,

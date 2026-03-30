@@ -475,7 +475,8 @@
       },
       "AppTunnel.Vpn.WireGuard/1.0.0": {
         "dependencies": {
-          "AppTunnel.Core": "1.0.0"
+          "AppTunnel.Core": "1.0.0",
+          "System.ServiceProcess.ServiceController": "8.0.1"
         },
         "runtime": {
           "AppTunnel.Vpn.WireGuard.dll": {

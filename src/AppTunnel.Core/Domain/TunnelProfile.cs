@@ -9,7 +9,8 @@ public sealed record TunnelProfile
         string importedConfigPath,
         string? secretReferenceId,
         bool isEnabled,
-        DateTimeOffset importedAtUtc)
+        DateTimeOffset importedAtUtc,
+        WireGuardProfileDetails? wireGuardProfile = null)
     {
         if (id == Guid.Empty)
         {
@@ -33,6 +34,7 @@ public sealed record TunnelProfile
         SecretReferenceId = secretReferenceId;
         IsEnabled = isEnabled;
         ImportedAtUtc = importedAtUtc;
+        WireGuardProfile = wireGuardProfile;
     }
 
     public Guid Id { get; }
@@ -48,4 +50,21 @@ public sealed record TunnelProfile
     public bool IsEnabled { get; }
 
     public DateTimeOffset ImportedAtUtc { get; }
+
+    public WireGuardProfileDetails? WireGuardProfile { get; }
 }
+
+public sealed record WireGuardProfileDetails(
+    string InterfaceName,
+    IReadOnlyList<string> Addresses,
+    IReadOnlyList<string> DnsServers,
+    int? ListenPort,
+    int? Mtu,
+    IReadOnlyList<WireGuardPeerDetails> Peers);
+
+public sealed record WireGuardPeerDetails(
+    string PublicKey,
+    string? Endpoint,
+    IReadOnlyList<string> AllowedIps,
+    bool HasPresharedKey,
+    int? PersistentKeepaliveSeconds);

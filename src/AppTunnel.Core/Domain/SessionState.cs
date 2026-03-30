@@ -5,6 +5,7 @@ public sealed record SessionState(
     DateTimeOffset StartedAtUtc,
     DateTimeOffset UpdatedAtUtc,
     int LoadedProfileCount,
+    int ConnectedProfileCount,
     int LoadedAppRuleCount,
     string TunnelManagerState,
     string RouterManagerState,

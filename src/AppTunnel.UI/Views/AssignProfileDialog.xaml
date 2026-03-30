@@ -1,0 +1,68 @@
+<Window x:Class="AppTunnel.UI.Views.AssignProfileDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Assign Profile"
+        Width="620"
+        Height="460"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BackgroundBrush}"
+        Foreground="{StaticResource TextStrongBrush}">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock Style="{StaticResource ShellTitleStyle}" Text="Assign Profile" />
+            <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Choose which tunnel profile this app rule should follow and persist the future routing behaviors." />
+        </StackPanel>
+
+        <Border Grid.Row="1" Margin="0,18,0,0" Style="{StaticResource ShellCardStyle}">
+            <StackPanel>
+                <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="22" Text="{Binding RuleDisplayName}" />
+                <TextBlock Margin="0,4,0,0" Style="{StaticResource ShellBodyStyle}" Text="{Binding TargetSummary}" />
+
+                <TextBlock Margin="0,18,0,0" Style="{StaticResource ShellBodyStyle}" Text="Assigned tunnel profile" />
+                <ComboBox x:Name="ProfileComboBox"
+                          Margin="0,8,0,0"
+                          Padding="10,6"
+                          DisplayMemberPath="Label"
+                          SelectedValuePath="ProfileId"
+                          Background="{StaticResource SurfaceMutedBrush}"
+                          BorderBrush="{StaticResource AccentSoftBrush}"
+                          Foreground="{StaticResource TextStrongBrush}" />
+
+                <CheckBox x:Name="EnabledCheckBox"
+                          Margin="0,18,0,0"
+                          Content="Rule enabled"
+                          IsChecked="True" />
+                <CheckBox x:Name="LaunchOnConnectCheckBox"
+                          Margin="0,12,0,0"
+                          Content="Launch app when its assigned tunnel connects" />
+                <CheckBox x:Name="KillTrafficOnDropCheckBox"
+                          Margin="0,12,0,0"
+                          Content="Kill selected app traffic if the tunnel drops" />
+                <CheckBox x:Name="IncludeChildProcessesCheckBox"
+                          Margin="0,12,0,0"
+                          Content="Include child processes when possible" />
+
+                <TextBlock Margin="0,18,0,0"
+                           Style="{StaticResource ShellBodyStyle}"
+                           Text="Child-process inclusion is best effort only. Helper processes discovered outside the original executable path remain a future rule-engine decision." />
+            </StackPanel>
+        </Border>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+            <Button Content="Cancel"
+                    Style="{StaticResource ShellGhostButtonStyle}"
+                    Click="CancelButtonOnClick" />
+            <Button Content="Save Assignment"
+                    Margin="12,0,0,0"
+                    Style="{StaticResource ShellAccentButtonStyle}"
+                    Click="SaveButtonOnClick" />
+        </StackPanel>
+    </Grid>
+</Window>

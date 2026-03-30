@@ -15,8 +15,8 @@ public sealed class JsonAppTunnelConfigurationStoreTests
 
         var configuration = await store.LoadAsync(CancellationToken.None);
 
-        Assert.NotEmpty(configuration.Profiles);
-        Assert.NotEmpty(configuration.AppRules);
+        Assert.Empty(configuration.Profiles);
+        Assert.Empty(configuration.AppRules);
         Assert.True(File.Exists(paths.ConfigurationFilePath));
     }
 
@@ -38,15 +38,36 @@ public sealed class JsonAppTunnelConfigurationStoreTests
                     @"C:\vpn\sample.conf",
                     secretReferenceId: "secret-1",
                     isEnabled: true,
-                    importedAtUtc: now)
+                    importedAtUtc: now,
+                    wireGuardProfile: new WireGuardProfileDetails(
+                        "Sample interface",
+                        ["10.0.0.2/32"],
+                        ["1.1.1.1"],
+                        ListenPort: 51820,
+                        Mtu: 1380,
+                        Peers:
+                        [
+                            new WireGuardPeerDetails(
+                                "public-key",
+                                "demo.example.com:51820",
+                                ["0.0.0.0/0"],
+                                HasPresharedKey: true,
+                                PersistentKeepaliveSeconds: 25)
+                        ]))
             ],
             [
                 new AppRule(
                     Guid.NewGuid(),
+                    AppKind.Win32Exe,
                     "Browser rule",
                     @"C:\Program Files\Browser\browser.exe",
-                    profileId,
+                    packageFamilyName: null,
+                    packageIdentity: null,
+                    profileId: profileId,
                     isEnabled: true,
+                    launchOnConnect: true,
+                    killAppTrafficOnTunnelDrop: true,
+                    includeChildProcesses: true,
                     updatedAtUtc: now)
             ],
             new AppTunnelSettings(
@@ -65,7 +86,14 @@ public sealed class JsonAppTunnelConfigurationStoreTests
         Assert.Single(actual.Profiles);
         Assert.Single(actual.AppRules);
         Assert.Equal(expected.Profiles[0].DisplayName, actual.Profiles[0].DisplayName);
+        Assert.NotNull(actual.Profiles[0].WireGuardProfile);
+        Assert.Equal("Sample interface", actual.Profiles[0].WireGuardProfile!.InterfaceName);
         Assert.Equal(expected.AppRules[0].ExecutablePath, actual.AppRules[0].ExecutablePath);
+        Assert.Equal(AppKind.Win32Exe, actual.AppRules[0].AppKind);
+        Assert.Equal(expected.AppRules[0].ProfileId, actual.AppRules[0].ProfileId);
+        Assert.True(actual.AppRules[0].LaunchOnConnect);
+        Assert.True(actual.AppRules[0].KillAppTrafficOnTunnelDrop);
+        Assert.True(actual.AppRules[0].IncludeChildProcesses);
     }
 
     private static string CreateTempDirectory()

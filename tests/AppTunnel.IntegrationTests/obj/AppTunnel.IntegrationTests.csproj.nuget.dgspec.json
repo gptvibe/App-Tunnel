@@ -83,27 +83,27 @@
         }
       }
     },
-    "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\tests\\AppTunnel.IntegrationTests\\AppTunnel.IntegrationTests.csproj": {
+    "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Router.WinDivert\\AppTunnel.Router.WinDivert.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\tests\\AppTunnel.IntegrationTests\\AppTunnel.IntegrationTests.csproj",
-        "projectName": "AppTunnel.IntegrationTests",
-        "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\tests\\AppTunnel.IntegrationTests\\AppTunnel.IntegrationTests.csproj",
+        "projectUniqueName": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Router.WinDivert\\AppTunnel.Router.WinDivert.csproj",
+        "projectName": "AppTunnel.Router.WinDivert",
+        "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Router.WinDivert\\AppTunnel.Router.WinDivert.csproj",
         "packagesPath": "C:\\Users\\fungk\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\tests\\AppTunnel.IntegrationTests\\obj\\",
+        "outputPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Router.WinDivert\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\fungk\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net8.0"
+          "net8.0-windows"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net8.0": {
-            "targetAlias": "net8.0",
+          "net8.0-windows7.0": {
+            "targetAlias": "net8.0-windows",
             "projectReferences": {
               "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Core\\AppTunnel.Core.csproj": {
                 "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Core\\AppTunnel.Core.csproj"
@@ -124,8 +124,354 @@
         "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
-        "net8.0": {
-          "targetAlias": "net8.0",
+        "net8.0-windows7.0": {
+          "targetAlias": "net8.0-windows",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.25, 8.0.25]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.25, 8.0.25]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.25, 8.0.25]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Service\\AppTunnel.Service.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Service\\AppTunnel.Service.csproj",
+        "projectName": "AppTunnel.Service",
+        "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Service\\AppTunnel.Service.csproj",
+        "packagesPath": "C:\\Users\\fungk\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Service\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\fungk\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0-windows"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0-windows7.0": {
+            "targetAlias": "net8.0-windows",
+            "projectReferences": {
+              "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Core\\AppTunnel.Core.csproj": {
+                "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Core\\AppTunnel.Core.csproj"
+              },
+              "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Router.WinDivert\\AppTunnel.Router.WinDivert.csproj": {
+                "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Router.WinDivert\\AppTunnel.Router.WinDivert.csproj"
+              },
+              "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.OpenVpn\\AppTunnel.Vpn.OpenVpn.csproj": {
+                "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.OpenVpn\\AppTunnel.Vpn.OpenVpn.csproj"
+              },
+              "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.WireGuard\\AppTunnel.Vpn.WireGuard.csproj": {
+                "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.WireGuard\\AppTunnel.Vpn.WireGuard.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.200"
+      },
+      "frameworks": {
+        "net8.0-windows7.0": {
+          "targetAlias": "net8.0-windows",
+          "dependencies": {
+            "Microsoft.Extensions.Hosting.WindowsServices": {
+              "target": "Package",
+              "version": "[8.0.1, )"
+            },
+            "System.Security.Cryptography.ProtectedData": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.25, 8.0.25]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[8.0.25, 8.0.25]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.25, 8.0.25]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.25, 8.0.25]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.OpenVpn\\AppTunnel.Vpn.OpenVpn.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.OpenVpn\\AppTunnel.Vpn.OpenVpn.csproj",
+        "projectName": "AppTunnel.Vpn.OpenVpn",
+        "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.OpenVpn\\AppTunnel.Vpn.OpenVpn.csproj",
+        "packagesPath": "C:\\Users\\fungk\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.OpenVpn\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\fungk\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0-windows"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0-windows7.0": {
+            "targetAlias": "net8.0-windows",
+            "projectReferences": {
+              "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Core\\AppTunnel.Core.csproj": {
+                "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Core\\AppTunnel.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.200"
+      },
+      "frameworks": {
+        "net8.0-windows7.0": {
+          "targetAlias": "net8.0-windows",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.25, 8.0.25]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.25, 8.0.25]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.25, 8.0.25]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.WireGuard\\AppTunnel.Vpn.WireGuard.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.WireGuard\\AppTunnel.Vpn.WireGuard.csproj",
+        "projectName": "AppTunnel.Vpn.WireGuard",
+        "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.WireGuard\\AppTunnel.Vpn.WireGuard.csproj",
+        "packagesPath": "C:\\Users\\fungk\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.WireGuard\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\fungk\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0-windows"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0-windows7.0": {
+            "targetAlias": "net8.0-windows",
+            "projectReferences": {
+              "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Core\\AppTunnel.Core.csproj": {
+                "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Core\\AppTunnel.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.200"
+      },
+      "frameworks": {
+        "net8.0-windows7.0": {
+          "targetAlias": "net8.0-windows",
+          "dependencies": {
+            "System.ServiceProcess.ServiceController": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.25, 8.0.25]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.25, 8.0.25]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.25, 8.0.25]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\tests\\AppTunnel.IntegrationTests\\AppTunnel.IntegrationTests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\tests\\AppTunnel.IntegrationTests\\AppTunnel.IntegrationTests.csproj",
+        "projectName": "AppTunnel.IntegrationTests",
+        "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\tests\\AppTunnel.IntegrationTests\\AppTunnel.IntegrationTests.csproj",
+        "packagesPath": "C:\\Users\\fungk\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\tests\\AppTunnel.IntegrationTests\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\fungk\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0-windows"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0-windows7.0": {
+            "targetAlias": "net8.0-windows",
+            "projectReferences": {
+              "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Core\\AppTunnel.Core.csproj": {
+                "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Core\\AppTunnel.Core.csproj"
+              },
+              "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Service\\AppTunnel.Service.csproj": {
+                "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Service\\AppTunnel.Service.csproj"
+              },
+              "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.OpenVpn\\AppTunnel.Vpn.OpenVpn.csproj": {
+                "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.OpenVpn\\AppTunnel.Vpn.OpenVpn.csproj"
+              },
+              "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.WireGuard\\AppTunnel.Vpn.WireGuard.csproj": {
+                "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Vpn.WireGuard\\AppTunnel.Vpn.WireGuard.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.200"
+      },
+      "frameworks": {
+        "net8.0-windows7.0": {
+          "targetAlias": "net8.0-windows",
           "dependencies": {
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",

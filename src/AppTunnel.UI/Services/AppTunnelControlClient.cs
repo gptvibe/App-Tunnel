@@ -21,6 +21,62 @@ public sealed class AppTunnelControlClient
         return response.Overview ?? throw new InvalidOperationException("The service did not return an overview payload.");
     }
 
+    public async Task<TunnelProfile> ImportProfileAsync(
+        string sourcePath,
+        string? displayName = null,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+            AppTunnelControlRequest.CreateImportProfile(sourcePath, displayName),
+            cancellationToken);
+
+        return response.Profile ?? throw new InvalidOperationException("The service did not return an imported profile payload.");
+    }
+
+    public async Task<AppRule> AddAppRuleAsync(
+        AppRuleCreateRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+            AppTunnelControlRequest.CreateAddAppRule(request),
+            cancellationToken);
+
+        return response.AppRule ?? throw new InvalidOperationException("The service did not return an app-rule payload.");
+    }
+
+    public async Task<AppRule> UpdateAppRuleAsync(
+        AppRuleUpdateRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+            AppTunnelControlRequest.CreateUpdateAppRule(request),
+            cancellationToken);
+
+        return response.AppRule ?? throw new InvalidOperationException("The service did not return an updated app-rule payload.");
+    }
+
+    public async Task<TunnelStatusSnapshot> ConnectProfileAsync(
+        Guid profileId,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+            AppTunnelControlRequest.CreateConnectProfile(profileId),
+            cancellationToken);
+
+        return response.TunnelStatus ?? throw new InvalidOperationException("The service did not return a tunnel status payload.");
+    }
+
+    public async Task<TunnelStatusSnapshot> DisconnectProfileAsync(
+        Guid profileId,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+            AppTunnelControlRequest.CreateDisconnectProfile(profileId),
+            cancellationToken);
+
+        return response.TunnelStatus ?? throw new InvalidOperationException("The service did not return a tunnel status payload.");
+    }
+
     public async Task<ExportedLogBundle> ExportLogBundleAsync(
         string? destinationDirectory = null,
         CancellationToken cancellationToken = default)

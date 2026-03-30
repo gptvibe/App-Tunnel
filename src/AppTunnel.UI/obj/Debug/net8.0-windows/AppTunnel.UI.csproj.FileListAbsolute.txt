@@ -63,3 +63,7 @@ C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\obj\Debug\net8.0-windo
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\obj\Debug\net8.0-windows\AppTunnel.UI.pdb
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\obj\Debug\net8.0-windows\AppTunnel.UI.genruntimeconfig.cache
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\obj\Debug\net8.0-windows\ref\AppTunnel.UI.dll
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\obj\Debug\net8.0-windows\Views\AddAppDialog.baml
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\obj\Debug\net8.0-windows\Views\AssignProfileDialog.baml
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\obj\Debug\net8.0-windows\Views\AddAppDialog.g.cs
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\obj\Debug\net8.0-windows\Views\AssignProfileDialog.g.cs

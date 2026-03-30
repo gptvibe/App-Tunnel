@@ -12,7 +12,9 @@ public interface ITunnelEngine
 
     Task<TunnelProfile> ImportProfileAsync(ProfileImportRequest request, CancellationToken cancellationToken);
 
-    Task ConnectAsync(Guid profileId, CancellationToken cancellationToken);
+    Task<TunnelStatusSnapshot> ConnectAsync(TunnelProfile profile, CancellationToken cancellationToken);
 
-    Task DisconnectAsync(Guid profileId, CancellationToken cancellationToken);
+    Task<TunnelStatusSnapshot> DisconnectAsync(TunnelProfile profile, CancellationToken cancellationToken);
+
+    Task<TunnelStatusSnapshot> GetStatusAsync(TunnelProfile profile, CancellationToken cancellationToken);
 }

@@ -2,6 +2,7 @@ using System.IO.Pipes;
 using System.Text;
 using System.Text.Json;
 using AppTunnel.Core.Contracts;
+using AppTunnel.Core.Domain;
 using AppTunnel.Core.Ipc;
 
 namespace AppTunnel.Service;
@@ -103,6 +104,33 @@ public sealed class NamedPipeControlServer(
                 await controlService.PingAsync(cancellationToken)),
             AppTunnelControlCommand.GetOverview => AppTunnelControlResponse.FromOverview(
                 await controlService.GetOverviewAsync(cancellationToken)),
+            AppTunnelControlCommand.ImportProfile => AppTunnelControlResponse.FromProfile(
+                await controlService.ImportProfileAsync(
+                    new ProfileImportRequest(
+                        request.DisplayName ?? string.Empty,
+                        request.SourcePath ?? throw new InvalidOperationException("ImportProfile requires a source path.")),
+                    cancellationToken),
+                "Profile imported"),
+            AppTunnelControlCommand.AddAppRule => AppTunnelControlResponse.FromAppRule(
+                await controlService.AddAppRuleAsync(
+                    request.AppRuleCreateRequest ?? throw new InvalidOperationException("AddAppRule requires an app-rule create payload."),
+                    cancellationToken),
+                "App rule added"),
+            AppTunnelControlCommand.UpdateAppRule => AppTunnelControlResponse.FromAppRule(
+                await controlService.UpdateAppRuleAsync(
+                    request.AppRuleUpdateRequest ?? throw new InvalidOperationException("UpdateAppRule requires an app-rule update payload."),
+                    cancellationToken),
+                "App rule updated"),
+            AppTunnelControlCommand.ConnectProfile => AppTunnelControlResponse.FromTunnelStatus(
+                await controlService.ConnectProfileAsync(
+                    request.ProfileId ?? throw new InvalidOperationException("ConnectProfile requires a profile ID."),
+                    cancellationToken),
+                "Profile connected"),
+            AppTunnelControlCommand.DisconnectProfile => AppTunnelControlResponse.FromTunnelStatus(
+                await controlService.DisconnectProfileAsync(
+                    request.ProfileId ?? throw new InvalidOperationException("DisconnectProfile requires a profile ID."),
+                    cancellationToken),
+                "Profile disconnected"),
             AppTunnelControlCommand.ExportLogBundle => AppTunnelControlResponse.FromLogBundle(
                 await controlService.ExportLogBundleAsync(request.DestinationDirectory, cancellationToken)),
             _ => AppTunnelControlResponse.Failed("unknown_command", $"Unsupported command '{request.Command}'."),

@@ -48,3 +48,13 @@ public enum ServiceRunState
     Stopped,
     Faulted,
 }
+
+public enum TunnelConnectionState
+{
+    Unknown,
+    Disconnected,
+    Connecting,
+    Connected,
+    Disconnecting,
+    Faulted,
+}

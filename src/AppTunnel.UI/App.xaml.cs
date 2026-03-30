@@ -22,6 +22,8 @@ public partial class App : WpfApplication
             .ConfigureServices(services =>
             {
                 services.AddSingleton<AppTunnelControlClient>();
+                services.AddSingleton<ExecutableIconService>();
+                services.AddSingleton<AppRuleDialogService>();
                 services.AddSingleton<MainWindowViewModel>();
                 services.AddSingleton<MainWindow>();
             })
@@ -57,6 +59,7 @@ public partial class App : WpfApplication
     protected override async void OnExit(WpfExitEventArgs e)
     {
         _trayIconHost?.Dispose();
+        _host.Services.GetRequiredService<MainWindowViewModel>().StopAutoRefresh();
 
         try
         {

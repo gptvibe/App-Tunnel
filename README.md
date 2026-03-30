@@ -8,6 +8,7 @@ Windows-only app-scoped VPN routing scaffold targeting C# .NET 8 WPF plus a Wind
 - Managed solution and project structure in `src/` and `tests/`
 - Shared core domain models and backend abstractions
 - Named-pipe handshake between the WPF UI and Windows service
+- WireGuard .conf import, validation, DPAPI-backed secret storage, and service-managed tunnel lifecycle
 - Native placeholders for the future WFP production router
 
 ## Build requirements
@@ -46,12 +47,26 @@ dotnet run --project .\src\AppTunnel.UI\AppTunnel.UI.csproj
 
 The UI should show the service connection state in the dashboard shell. The service should stay running with its named-pipe IPC host active. If the service is not running yet, the UI will show a disconnected state until the pipe becomes available.
 
-For the current scaffold, the service uses dry-run tunnel and router managers, DPAPI-backed secret storage, configuration persistence, and structured log export wiring without touching live VPN or routing state.
+By default, the service runs the WireGuard backend in `Auto` mode. If the official WireGuard for Windows runtime is installed, App Tunnel will stage a service-owned runtime config and manage the official tunnel service for connect and disconnect operations. If `wireguard.exe` is not available, App Tunnel falls back to a mock backend so the UI and integration tests still exercise the full control path.
+
+To force mock mode for local development or tests, set the following in `src/AppTunnel.Service/appsettings.json` or `appsettings.Development.json`:
+
+```json
+{
+	"AppTunnel": {
+		"WireGuard": {
+			"Mode": "Mock"
+		}
+	}
+}
+```
 
 ## Documentation
 
 - `docs/overview.md`
 - `docs/architecture.md`
+- `docs/wireguard-backend.md`
+- `docs/rule-engine.md`
 - `docs/roadmap.md`
 - `docs/licensing.md`
 - `docs/risks.md`
@@ -60,7 +75,8 @@ For the current scaffold, the service uses dry-run tunnel and router managers, D
 
 ## Known gaps
 
-- No real WireGuard or OpenVPN session management yet
+- OpenVPN remains unimplemented
+- Live WireGuard sessions require the official WireGuard for Windows runtime; otherwise the mock backend is used
 - No WinDivert interception or WFP driver implementation yet
 - No hardened named-pipe ACL model for service-to-user communication yet
 - No installer or portable cleanup utility yet

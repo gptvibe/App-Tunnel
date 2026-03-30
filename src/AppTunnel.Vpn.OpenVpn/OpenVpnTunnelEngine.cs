@@ -9,7 +9,7 @@ public sealed class OpenVpnTunnelEngine : ITunnelEngine
 
     public string DisplayName => "OpenVPN";
 
-    public BackendReadiness Readiness => BackendReadiness.DryRun;
+    public BackendReadiness Readiness => BackendReadiness.Planned;
 
     public Task<TunnelProfile> ImportProfileAsync(ProfileImportRequest request, CancellationToken cancellationToken)
     {
@@ -30,7 +30,23 @@ public sealed class OpenVpnTunnelEngine : ITunnelEngine
             importedAtUtc: DateTimeOffset.UtcNow));
     }
 
-    public Task ConnectAsync(Guid profileId, CancellationToken cancellationToken) => Task.CompletedTask;
+    public Task<TunnelStatusSnapshot> ConnectAsync(TunnelProfile profile, CancellationToken cancellationToken) =>
+        throw new NotSupportedException("OpenVPN is not implemented yet.");
 
-    public Task DisconnectAsync(Guid profileId, CancellationToken cancellationToken) => Task.CompletedTask;
+    public Task<TunnelStatusSnapshot> DisconnectAsync(TunnelProfile profile, CancellationToken cancellationToken) =>
+        throw new NotSupportedException("OpenVPN is not implemented yet.");
+
+    public Task<TunnelStatusSnapshot> GetStatusAsync(TunnelProfile profile, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return Task.FromResult(new TunnelStatusSnapshot(
+            profile.Id,
+            TunnelConnectionState.Disconnected,
+            "OpenVPN backend is not implemented yet.",
+            ErrorMessage: null,
+            BackendName: DisplayName,
+            IsMock: true,
+            UpdatedAtUtc: DateTimeOffset.UtcNow));
+    }
 }
