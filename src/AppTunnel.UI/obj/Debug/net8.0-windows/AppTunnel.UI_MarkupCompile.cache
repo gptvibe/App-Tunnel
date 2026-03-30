@@ -1,5 +1,5 @@
 ﻿AppTunnel.UI
-
+1.0.0.0
 
 winexe
 C#
@@ -12,7 +12,7 @@ TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\App.xaml
 61123645624
 
-121901908022
+142079966298
 236983728253
 MainWindow.xaml;Views\AppsPage.xaml;Views\DashboardPage.xaml;Views\LogsPage.xaml;Views\ProfilesPage.xaml;Views\SettingsPage.xaml;
 
