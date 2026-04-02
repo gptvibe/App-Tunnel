@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AppTunnel.Core.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0bb77451aa5b3c2fa8cb97e0c5c4fe8cff5062fc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96027e590ef02b3740b130f55aaeb1d4a2beba44")]
 [assembly: System.Reflection.AssemblyProductAttribute("AppTunnel.Core.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AppTunnel.Core.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
