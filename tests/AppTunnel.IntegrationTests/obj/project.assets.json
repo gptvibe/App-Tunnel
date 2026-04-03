@@ -2809,7 +2809,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\fungk\\.nuget\\packages\\": {}
+    "C:\\Users\\fungk\\.nuget\\packages": {}
   },
   "project": {
     "version": "1.0.0",
@@ -2817,11 +2817,11 @@
       "projectUniqueName": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\tests\\AppTunnel.IntegrationTests\\AppTunnel.IntegrationTests.csproj",
       "projectName": "AppTunnel.IntegrationTests",
       "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\tests\\AppTunnel.IntegrationTests\\AppTunnel.IntegrationTests.csproj",
-      "packagesPath": "C:\\Users\\fungk\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\fungk\\.nuget\\packages",
       "outputPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\tests\\AppTunnel.IntegrationTests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\fungk\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0-windows"
@@ -2854,7 +2854,7 @@
         ]
       },
       "restoreAuditProperties": {
-        "enableAudit": "true",
+        "enableAudit": "false",
         "auditLevel": "low",
         "auditMode": "direct"
       },

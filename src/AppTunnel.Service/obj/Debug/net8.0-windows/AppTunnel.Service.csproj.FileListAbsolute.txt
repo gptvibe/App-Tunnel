@@ -1,5 +1,3 @@
-C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Service\bin\Debug\net8.0-windows\appsettings.Development.json
-C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Service\bin\Debug\net8.0-windows\appsettings.json
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Service\bin\Debug\net8.0-windows\AppTunnel.Service.exe
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Service\bin\Debug\net8.0-windows\AppTunnel.Service.deps.json
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.Service\bin\Debug\net8.0-windows\AppTunnel.Service.runtimeconfig.json

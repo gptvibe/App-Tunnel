@@ -8,6 +8,8 @@ public interface IAppTunnelControlService
 
     Task<ServiceOverview> GetOverviewAsync(CancellationToken cancellationToken);
 
+    Task<AppTunnelSettings> UpdateSettingsAsync(AppTunnelSettingsUpdateRequest request, CancellationToken cancellationToken);
+
     Task<TunnelProfile> ImportProfileAsync(ProfileImportRequest request, CancellationToken cancellationToken);
 
     Task<AppRule> AddAppRuleAsync(AppRuleCreateRequest request, CancellationToken cancellationToken);

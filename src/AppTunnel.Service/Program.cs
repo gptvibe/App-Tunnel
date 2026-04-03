@@ -6,6 +6,9 @@ using AppTunnel.Service;
 using AppTunnel.Service.Runtime;
 using AppTunnel.Vpn.OpenVpn;
 using AppTunnel.Vpn.WireGuard;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -44,15 +47,26 @@ var wireGuardBackendMode = Enum.TryParse<WireGuardBackendMode>(
 var wireGuardBackendOptions = new WireGuardBackendOptions(
     wireGuardBackendMode,
     builder.Configuration["AppTunnel:WireGuard:WireGuardExePath"]);
+var openVpnBackendOptions = new OpenVpnBackendOptions(
+    builder.Configuration["AppTunnel:OpenVpn:OpenVpnExePath"],
+    int.TryParse(
+        builder.Configuration["AppTunnel:OpenVpn:ConnectTimeoutSeconds"],
+        out var configuredOpenVpnTimeoutSeconds)
+        ? configuredOpenVpnTimeoutSeconds
+        : 20);
 
 builder.Services.AddSingleton(wireGuardBackendOptions);
+builder.Services.AddSingleton(openVpnBackendOptions);
 builder.Services.AddSingleton<WireGuardConfigParser>();
+builder.Services.AddSingleton<OpenVpnConfigParser>();
 builder.Services.AddSingleton<IWireGuardBackend>(_ => WireGuardBackendFactory.Create(wireGuardBackendOptions));
+builder.Services.AddSingleton<IOpenVpnProcessFactory, SystemOpenVpnProcessFactory>();
+builder.Services.AddSingleton<IOpenVpnBackend, ManagedProcessOpenVpnBackend>();
 builder.Services.AddSingleton<ITunnelEngine, WireGuardTunnelEngine>();
 builder.Services.AddSingleton<ITunnelEngine, OpenVpnTunnelEngine>();
 builder.Services.AddSingleton<IRouterBackend, WinDivertRouterBackend>();
 builder.Services.AddSingleton<ServiceTunnelManager>();
-builder.Services.AddSingleton<DryRunRouterManager>();
+builder.Services.AddSingleton<RouterManager>();
 builder.Services.AddSingleton<AppTunnelRuntime>();
 builder.Services.AddSingleton<IAppTunnelControlService>(serviceProvider =>
     serviceProvider.GetRequiredService<AppTunnelRuntime>());

@@ -64,7 +64,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\fungk\\.nuget\\packages\\": {}
+    "C:\\Users\\fungk\\.nuget\\packages": {}
   },
   "project": {
     "version": "1.0.0",
@@ -72,11 +72,11 @@
       "projectUniqueName": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Core\\AppTunnel.Core.csproj",
       "projectName": "AppTunnel.Core",
       "projectPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Core\\AppTunnel.Core.csproj",
-      "packagesPath": "C:\\Users\\fungk\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\fungk\\.nuget\\packages",
       "outputPath": "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\src\\AppTunnel.Core\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\fungk\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\fungk\\Desktop\\GitHub\\App Tunnel\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -96,7 +96,7 @@
         ]
       },
       "restoreAuditProperties": {
-        "enableAudit": "true",
+        "enableAudit": "false",
         "auditLevel": "low",
         "auditMode": "direct"
       },

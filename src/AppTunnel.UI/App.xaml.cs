@@ -24,6 +24,7 @@ public partial class App : WpfApplication
                 services.AddSingleton<AppTunnelControlClient>();
                 services.AddSingleton<ExecutableIconService>();
                 services.AddSingleton<AppRuleDialogService>();
+                services.AddSingleton<TunnelImportDialogService>();
                 services.AddSingleton<MainWindowViewModel>();
                 services.AddSingleton<MainWindow>();
             })

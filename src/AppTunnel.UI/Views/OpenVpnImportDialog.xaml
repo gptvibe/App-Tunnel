@@ -1,0 +1,72 @@
+<Window x:Class="AppTunnel.UI.Views.OpenVpnImportDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Import OpenVPN Profile"
+        Width="760"
+        Height="460"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BackgroundBrush}"
+        Foreground="{StaticResource TextStrongBrush}">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock Style="{StaticResource ShellTitleStyle}" Text="Import OpenVPN Profile" />
+            <TextBlock Style="{StaticResource ShellBodyStyle}" Text="The service validates the .ovpn file, protects credentials and referenced cert material with DPAPI, then starts openvpn.exe on demand." />
+        </StackPanel>
+
+        <Border Grid.Row="1" Margin="0,18,0,0" Style="{StaticResource ShellCardStyle}">
+            <StackPanel>
+                <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Configuration file" />
+                <TextBlock Margin="0,8,0,0"
+                           FontSize="16"
+                           Text="{Binding SourcePath}"
+                           TextWrapping="Wrap" />
+
+                <TextBlock Margin="0,18,0,0" Style="{StaticResource ShellBodyStyle}" Text="Display name" />
+                <TextBox x:Name="DisplayNameTextBox"
+                         Margin="0,8,0,0"
+                         Padding="12,8"
+                         Background="{StaticResource SurfaceMutedBrush}"
+                         BorderBrush="{StaticResource AccentSoftBrush}"
+                         Foreground="{StaticResource TextStrongBrush}"
+                         Text="{Binding SuggestedDisplayName}" />
+
+                <TextBlock Margin="0,18,0,0" Style="{StaticResource ShellBodyStyle}" Text="Username (optional)" />
+                <TextBox x:Name="UsernameTextBox"
+                         Margin="0,8,0,0"
+                         Padding="12,8"
+                         Background="{StaticResource SurfaceMutedBrush}"
+                         BorderBrush="{StaticResource AccentSoftBrush}"
+                         Foreground="{StaticResource TextStrongBrush}" />
+
+                <TextBlock Margin="0,18,0,0" Style="{StaticResource ShellBodyStyle}" Text="Password (optional)" />
+                <PasswordBox x:Name="PasswordTextBox"
+                             Margin="0,8,0,0"
+                             Padding="12,8"
+                             Background="{StaticResource SurfaceMutedBrush}"
+                             BorderBrush="{StaticResource AccentSoftBrush}"
+                             Foreground="{StaticResource TextStrongBrush}" />
+
+                <TextBlock Margin="0,18,0,0"
+                           Style="{StaticResource ShellBodyStyle}"
+                           Text="Leave the credential fields blank when the profile already includes an external auth-user-pass file. If the service reports that credentials are required, re-open the import and provide them here." />
+            </StackPanel>
+        </Border>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+            <Button Content="Cancel"
+                    Style="{StaticResource ShellGhostButtonStyle}"
+                    Click="CancelButtonOnClick" />
+            <Button Content="Import OpenVPN"
+                    Margin="12,0,0,0"
+                    Style="{StaticResource ShellAccentButtonStyle}"
+                    Click="ImportButtonOnClick" />
+        </StackPanel>
+    </Grid>
+</Window>

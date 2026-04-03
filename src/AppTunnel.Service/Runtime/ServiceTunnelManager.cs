@@ -41,12 +41,7 @@ public sealed class ServiceTunnelManager(IEnumerable<ITunnelEngine> tunnelEngine
 
         try
         {
-            if (!string.Equals(Path.GetExtension(request.SourcePath), ".conf", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new InvalidOperationException("Only WireGuard .conf imports are supported right now.");
-            }
-
-            var engine = GetEngine(TunnelKind.WireGuard);
+            var engine = GetEngine(ResolveTunnelKind(request.SourcePath));
             var profile = await engine.ImportProfileAsync(request, cancellationToken);
             _statuses[profile.Id] = await engine.GetStatusAsync(profile, cancellationToken);
             UpdateState(_statuses.Count);
@@ -153,6 +148,14 @@ public sealed class ServiceTunnelManager(IEnumerable<ITunnelEngine> tunnelEngine
         _engines.TryGetValue(tunnelKind, out var engine)
             ? engine
             : throw new InvalidOperationException($"No tunnel engine is registered for '{tunnelKind}'.");
+
+    private static TunnelKind ResolveTunnelKind(string sourcePath) =>
+        Path.GetExtension(sourcePath).ToLowerInvariant() switch
+        {
+            ".conf" => TunnelKind.WireGuard,
+            ".ovpn" => TunnelKind.OpenVpn,
+            _ => throw new InvalidOperationException("Only WireGuard .conf and OpenVPN .ovpn imports are supported."),
+        };
 
     private void UpdateState(int loadedProfileCount)
     {

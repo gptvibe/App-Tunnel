@@ -1,5 +1,5 @@
 ﻿AppTunnel.UI
-1.0.0.0
+
 
 winexe
 C#
@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\App.xaml
-8843512672
+9289513441
 
-20363062564
+20-1015518348
 236983728253
-MainWindow.xaml;Views\AddAppDialog.xaml;Views\AppsPage.xaml;Views\AssignProfileDialog.xaml;Views\DashboardPage.xaml;Views\LogsPage.xaml;Views\ProfilesPage.xaml;Views\SettingsPage.xaml;
+MainWindow.xaml;Views\AddAppDialog.xaml;Views\AppsPage.xaml;Views\AssignProfileDialog.xaml;Views\DashboardPage.xaml;Views\LogsPage.xaml;Views\OpenVpnImportDialog.xaml;Views\ProfilesPage.xaml;Views\SettingsPage.xaml;
 
 False
 

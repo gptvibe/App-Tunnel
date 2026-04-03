@@ -26,10 +26,16 @@ public sealed class WireGuardRuntimeMockModeTests
             paths,
             new WireGuardConfigParser(),
             new MockWireGuardBackend());
+        var openVpnEngine = new OpenVpnTunnelEngine(
+            secretStore,
+            structuredLogService,
+            paths,
+            new OpenVpnConfigParser(),
+            new StubOpenVpnBackend());
         var tunnelEngines = new ITunnelEngine[]
         {
             wireGuardEngine,
-            new OpenVpnTunnelEngine(),
+            openVpnEngine,
         };
         var runtime = new AppTunnelRuntime(
             NullLogger<AppTunnelRuntime>.Instance,
@@ -38,7 +44,7 @@ public sealed class WireGuardRuntimeMockModeTests
             structuredLogService,
             new FakeLogBundleExporter(),
             new ServiceTunnelManager(tunnelEngines),
-            new DryRunRouterManager(structuredLogService),
+            new RouterManager(structuredLogService, Array.Empty<IRouterBackend>()),
             tunnelEngines,
             Array.Empty<IRouterBackend>(),
             paths);
@@ -81,10 +87,16 @@ public sealed class WireGuardRuntimeMockModeTests
             paths,
             new WireGuardConfigParser(),
             new MockWireGuardBackend());
+        var openVpnEngine = new OpenVpnTunnelEngine(
+            secretStore,
+            structuredLogService,
+            paths,
+            new OpenVpnConfigParser(),
+            new StubOpenVpnBackend());
         var tunnelEngines = new ITunnelEngine[]
         {
             wireGuardEngine,
-            new OpenVpnTunnelEngine(),
+            openVpnEngine,
         };
         var runtime = new AppTunnelRuntime(
             NullLogger<AppTunnelRuntime>.Instance,
@@ -93,7 +105,7 @@ public sealed class WireGuardRuntimeMockModeTests
             structuredLogService,
             new FakeLogBundleExporter(),
             new ServiceTunnelManager(tunnelEngines),
-            new DryRunRouterManager(structuredLogService),
+            new RouterManager(structuredLogService, Array.Empty<IRouterBackend>()),
             tunnelEngines,
             Array.Empty<IRouterBackend>(),
             paths);
@@ -189,5 +201,35 @@ public sealed class WireGuardRuntimeMockModeTests
                 Path.Combine(destinationDirectory ?? Path.GetTempPath(), "bundle.zip"),
                 DateTimeOffset.UtcNow,
                 IncludedFileCount: 0));
+    }
+
+    private sealed class StubOpenVpnBackend : IOpenVpnBackend
+    {
+        public string BackendName => "OpenVPN stub";
+
+        public BackendReadiness Readiness => BackendReadiness.Mvp;
+
+        public bool IsMock => true;
+
+        public Task<OpenVpnBackendResult> ConnectAsync(OpenVpnServiceContext context, CancellationToken cancellationToken) =>
+            Task.FromResult(new OpenVpnBackendResult(
+                TunnelConnectionState.Connected,
+                "OpenVPN stub connected.",
+                ErrorMessage: null,
+                UpdatedAtUtc: DateTimeOffset.UtcNow));
+
+        public Task<OpenVpnBackendResult> DisconnectAsync(OpenVpnServiceContext context, CancellationToken cancellationToken) =>
+            Task.FromResult(new OpenVpnBackendResult(
+                TunnelConnectionState.Disconnected,
+                "OpenVPN stub disconnected.",
+                ErrorMessage: null,
+                UpdatedAtUtc: DateTimeOffset.UtcNow));
+
+        public Task<OpenVpnBackendResult> GetStatusAsync(OpenVpnServiceContext context, CancellationToken cancellationToken) =>
+            Task.FromResult(new OpenVpnBackendResult(
+                TunnelConnectionState.Disconnected,
+                "OpenVPN stub idle.",
+                ErrorMessage: null,
+                UpdatedAtUtc: DateTimeOffset.UtcNow));
     }
 }

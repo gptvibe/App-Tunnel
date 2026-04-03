@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AppTunnel.Service")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96027e590ef02b3740b130f55aaeb1d4a2beba44")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+02ee6655358fe68f5824a9ca2fd3f173b6cd15d6")]
 [assembly: System.Reflection.AssemblyProductAttribute("AppTunnel.Service")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AppTunnel.Service")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

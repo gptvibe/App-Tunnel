@@ -10,7 +10,8 @@ public sealed record TunnelProfile
         string? secretReferenceId,
         bool isEnabled,
         DateTimeOffset importedAtUtc,
-        WireGuardProfileDetails? wireGuardProfile = null)
+        WireGuardProfileDetails? wireGuardProfile = null,
+        OpenVpnProfileDetails? openVpnProfile = null)
     {
         if (id == Guid.Empty)
         {
@@ -35,6 +36,7 @@ public sealed record TunnelProfile
         IsEnabled = isEnabled;
         ImportedAtUtc = importedAtUtc;
         WireGuardProfile = wireGuardProfile;
+        OpenVpnProfile = openVpnProfile;
     }
 
     public Guid Id { get; }
@@ -52,6 +54,8 @@ public sealed record TunnelProfile
     public DateTimeOffset ImportedAtUtc { get; }
 
     public WireGuardProfileDetails? WireGuardProfile { get; }
+
+    public OpenVpnProfileDetails? OpenVpnProfile { get; }
 }
 
 public sealed record WireGuardProfileDetails(

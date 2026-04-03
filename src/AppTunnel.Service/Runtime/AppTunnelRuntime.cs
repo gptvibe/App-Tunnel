@@ -3,6 +3,8 @@ using AppTunnel.Core.Contracts;
 using AppTunnel.Core.Domain;
 using AppTunnel.Core.Ipc;
 using AppTunnel.Core.Services;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AppTunnel.Service.Runtime;
 
@@ -13,7 +15,7 @@ public sealed class AppTunnelRuntime(
     IStructuredLogService structuredLogService,
     ILogBundleExporter logBundleExporter,
     ServiceTunnelManager tunnelManager,
-    DryRunRouterManager dryRunRouterManager,
+    RouterManager routerManager,
     IEnumerable<ITunnelEngine> tunnelEngines,
     IEnumerable<IRouterBackend> routerBackends,
     AppTunnelPaths paths) : IHostedService, IAppTunnelControlService
@@ -30,11 +32,12 @@ public sealed class AppTunnelRuntime(
 
     private static readonly string[] KnownGaps =
     [
-        "OpenVPN remains a placeholder behind the shared tunnel-engine contract.",
-        "Routing backends do not yet modify live packet flow.",
-        "Launch-on-connect and tunnel-drop enforcement settings are persisted but not executed yet.",
+        "OpenVPN currently wraps openvpn.exe from the Windows service; an embedded OpenVPN 3 Core backend is still a future migration.",
+        "WinDivert routing is IPv4-first and currently targets TCP/UDP flows only.",
+        "Child-process inheritance is best-effort; exact parent/child tracking is not yet complete.",
         "Named-pipe ACL hardening is still development-grade.",
         "Live WireGuard sessions require the official WireGuard for Windows runtime; mock mode is used when it is unavailable.",
+        "The OpenVPN MVP blocks script and management directives during import and force-stops the managed process on disconnect.",
     ];
 
     private readonly SemaphoreSlim _gate = new(1, 1);
@@ -50,7 +53,7 @@ public sealed class AppTunnelRuntime(
         0,
         0,
         "Tunnel manager is stopped.",
-        "Dry-run router manager is stopped.",
+        "Router manager is stopped.",
         RoutingBackendKind.DryRun);
     private DateTimeOffset _startedAtUtc = DateTimeOffset.UtcNow;
 
@@ -73,10 +76,7 @@ public sealed class AppTunnelRuntime(
 
             _configuration = await configurationStore.LoadAsync(cancellationToken);
             await tunnelManager.LoadAsync(_configuration.Profiles, cancellationToken);
-            await dryRunRouterManager.LoadAsync(
-                _configuration.Settings.PreferredRoutingBackend,
-                _configuration.AppRules,
-                cancellationToken);
+            await ApplyRoutingPlanAsync(cancellationToken);
 
             _sessionState = CreateSessionState(ServiceRunState.Running);
 
@@ -88,6 +88,7 @@ public sealed class AppTunnelRuntime(
                 {
                     ["profileCount"] = _configuration.Profiles.Count.ToString(CultureInfo.InvariantCulture),
                     ["appRuleCount"] = _configuration.AppRules.Count.ToString(CultureInfo.InvariantCulture),
+                    ["preferredRoutingBackend"] = _configuration.Settings.PreferredRoutingBackend.ToString(),
                 },
                 cancellationToken);
         }
@@ -112,8 +113,8 @@ public sealed class AppTunnelRuntime(
                 properties: null,
                 cancellationToken);
 
-            await dryRunRouterManager.StopAsync(cancellationToken);
             await tunnelManager.StopAsync(_configuration.Profiles, cancellationToken);
+            await routerManager.StopAsync(cancellationToken);
 
             _sessionState = CreateSessionState(ServiceRunState.Stopped);
 
@@ -137,7 +138,7 @@ public sealed class AppTunnelRuntime(
         return Task.FromResult(new PingReply(
             "App Tunnel Service",
             DateTimeOffset.UtcNow,
-            "scaffold-v2",
+            "routing-mvp-v1",
             _sessionState.RunState));
     }
 
@@ -152,6 +153,7 @@ public sealed class AppTunnelRuntime(
         try
         {
             tunnelStatuses = await tunnelManager.RefreshStatusesAsync(_configuration.Profiles, cancellationToken);
+            await routerManager.ApplyAsync(CreateRoutingPlan(tunnelStatuses), cancellationToken);
             _sessionState = CreateSessionState(_sessionState.RunState);
         }
         finally
@@ -163,9 +165,10 @@ public sealed class AppTunnelRuntime(
 
         return new ServiceOverview(
             GeneratedAtUtc: DateTimeOffset.UtcNow,
-            ServiceVersion: typeof(AppTunnelRuntime).Assembly.GetName().Version?.ToString() ?? "0.1.0-scaffold",
+            ServiceVersion: typeof(AppTunnelRuntime).Assembly.GetName().Version?.ToString() ?? "0.1.0-routing-mvp",
             Settings: _configuration.Settings,
             SessionState: CreateSessionState(_sessionState.RunState),
+            RouterDiagnostics: routerManager.Diagnostics,
             Storage: paths.ToSnapshot(),
             TunnelEngines: BuildTunnelEngineStatuses(),
             RouterBackends: BuildRouterBackendStatuses(),
@@ -174,6 +177,47 @@ public sealed class AppTunnelRuntime(
             AppRules: _configuration.AppRules,
             RecentLogs: logs,
             KnownGaps: KnownGaps);
+    }
+
+    public async Task<AppTunnelSettings> UpdateSettingsAsync(
+        AppTunnelSettingsUpdateRequest request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        await _gate.WaitAsync(cancellationToken);
+
+        try
+        {
+            _configuration = _configuration with
+            {
+                Settings = _configuration.Settings with
+                {
+                    PreferredRoutingBackend = request.PreferredRoutingBackend,
+                },
+            };
+
+            await configurationStore.SaveAsync(_configuration, cancellationToken);
+            await ApplyRoutingPlanAsync(cancellationToken);
+            _sessionState = CreateSessionState(_sessionState.RunState);
+
+            await structuredLogService.WriteAsync(
+                "Information",
+                nameof(AppTunnelRuntime),
+                "Updated App Tunnel settings.",
+                new Dictionary<string, string>
+                {
+                    ["preferredRoutingBackend"] = request.PreferredRoutingBackend.ToString(),
+                },
+                cancellationToken);
+
+            return _configuration.Settings;
+        }
+        finally
+        {
+            _gate.Release();
+        }
     }
 
     public async Task<TunnelProfile> ImportProfileAsync(ProfileImportRequest request, CancellationToken cancellationToken)
@@ -189,7 +233,7 @@ public sealed class AppTunnelRuntime(
             if (_configuration.Profiles.Any(profile =>
                 string.Equals(profile.ImportedConfigPath, fullPath, StringComparison.OrdinalIgnoreCase)))
             {
-                throw new InvalidOperationException("A tunnel profile has already been imported from this .conf file.");
+                throw new InvalidOperationException("A tunnel profile has already been imported from this configuration file.");
             }
 
             var importedProfile = await tunnelManager.ImportAsync(
@@ -205,6 +249,7 @@ public sealed class AppTunnelRuntime(
             };
 
             await configurationStore.SaveAsync(_configuration, cancellationToken);
+            await ApplyRoutingPlanAsync(cancellationToken);
             _sessionState = CreateSessionState(_sessionState.RunState);
 
             await structuredLogService.WriteAsync(
@@ -342,6 +387,7 @@ public sealed class AppTunnelRuntime(
         try
         {
             var status = await tunnelManager.ConnectAsync(GetProfile(profileId), cancellationToken);
+            await ApplyRoutingPlanAsync(cancellationToken);
             _sessionState = CreateSessionState(_sessionState.RunState);
             return status;
         }
@@ -360,6 +406,7 @@ public sealed class AppTunnelRuntime(
         try
         {
             var status = await tunnelManager.DisconnectAsync(GetProfile(profileId), cancellationToken);
+            await ApplyRoutingPlanAsync(cancellationToken);
             _sessionState = CreateSessionState(_sessionState.RunState);
             return status;
         }
@@ -397,8 +444,8 @@ public sealed class AppTunnelRuntime(
             tunnelManager.ConnectedProfileCount,
             _configuration.AppRules.Count,
             tunnelManager.State,
-            dryRunRouterManager.State,
-            dryRunRouterManager.ActiveBackend);
+            routerManager.State,
+            routerManager.ActiveBackend);
 
     private IReadOnlyList<TunnelEngineStatus> BuildTunnelEngineStatuses() =>
         _tunnelEngines
@@ -421,21 +468,22 @@ public sealed class AppTunnelRuntime(
         {
             new(
                 RoutingBackendKind.DryRun,
-                "Dry-Run Router Manager",
+                "Dry-Run Router Backend",
                 BackendReadiness.DryRun,
-                dryRunRouterManager.State),
+                routerManager.ActiveBackend == RoutingBackendKind.DryRun
+                    ? routerManager.State
+                    : "Available as a non-enforcing fallback."),
         };
 
         statuses.AddRange(_routerBackends.Select(backend => new RouterBackendStatus(
             backend.Kind,
             backend.DisplayName,
             backend.Readiness,
-            backend.Readiness switch
-            {
-                BackendReadiness.Planned => "Registered placeholder only.",
-                BackendReadiness.DryRun => "Dry-run backend registered.",
-                _ => "Backend is registered in the scaffold.",
-            })));
+            routerManager.ActiveBackend == backend.Kind
+                ? routerManager.State
+                : backend.RequiresElevation
+                    ? "Requires elevation and a running tunnel to enforce routing."
+                    : "Registered.")));
 
         if (statuses.All(status => status.BackendKind != RoutingBackendKind.Wfp))
         {
@@ -450,6 +498,20 @@ public sealed class AppTunnelRuntime(
             .OrderBy(status => status.DisplayName)
             .ToArray();
     }
+
+    private async Task ApplyRoutingPlanAsync(CancellationToken cancellationToken)
+    {
+        var tunnelStatuses = await tunnelManager.RefreshStatusesAsync(_configuration.Profiles, cancellationToken);
+        await routerManager.ApplyAsync(CreateRoutingPlan(tunnelStatuses), cancellationToken);
+    }
+
+    private RoutingPlan CreateRoutingPlan(IReadOnlyList<TunnelStatusSnapshot> tunnelStatuses) =>
+        new(
+            DateTimeOffset.UtcNow,
+            _configuration.Settings.PreferredRoutingBackend,
+            _configuration.Profiles,
+            tunnelStatuses,
+            _configuration.AppRules);
 
     private TunnelProfile GetProfile(Guid profileId) =>
         _configuration.Profiles.FirstOrDefault(profile => profile.Id == profileId)
@@ -474,10 +536,7 @@ public sealed class AppTunnelRuntime(
         };
 
         await configurationStore.SaveAsync(_configuration, cancellationToken);
-        await dryRunRouterManager.LoadAsync(
-            _configuration.Settings.PreferredRoutingBackend,
-            _configuration.AppRules,
-            cancellationToken);
+        await ApplyRoutingPlanAsync(cancellationToken);
         _sessionState = CreateSessionState(_sessionState.RunState);
     }
 

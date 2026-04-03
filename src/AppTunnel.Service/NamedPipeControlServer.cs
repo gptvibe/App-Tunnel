@@ -4,6 +4,8 @@ using System.Text.Json;
 using AppTunnel.Core.Contracts;
 using AppTunnel.Core.Domain;
 using AppTunnel.Core.Ipc;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AppTunnel.Service;
 
@@ -104,11 +106,17 @@ public sealed class NamedPipeControlServer(
                 await controlService.PingAsync(cancellationToken)),
             AppTunnelControlCommand.GetOverview => AppTunnelControlResponse.FromOverview(
                 await controlService.GetOverviewAsync(cancellationToken)),
+            AppTunnelControlCommand.UpdateSettings => AppTunnelControlResponse.FromSettings(
+                await controlService.UpdateSettingsAsync(
+                    request.SettingsUpdateRequest ?? throw new InvalidOperationException("UpdateSettings requires a settings payload."),
+                    cancellationToken),
+                "Settings updated"),
             AppTunnelControlCommand.ImportProfile => AppTunnelControlResponse.FromProfile(
                 await controlService.ImportProfileAsync(
                     new ProfileImportRequest(
                         request.DisplayName ?? string.Empty,
-                        request.SourcePath ?? throw new InvalidOperationException("ImportProfile requires a source path.")),
+                        request.SourcePath ?? throw new InvalidOperationException("ImportProfile requires a source path."),
+                        request.OpenVpnImportOptions),
                     cancellationToken),
                 "Profile imported"),
             AppTunnelControlCommand.AddAppRule => AppTunnelControlResponse.FromAppRule(

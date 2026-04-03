@@ -6,7 +6,14 @@ public sealed record PingReply(
     string ProtocolVersion,
     ServiceRunState RunState);
 
-public sealed record ProfileImportRequest(string DisplayName, string SourcePath);
+public sealed record ProfileImportRequest(
+    string DisplayName,
+    string SourcePath,
+    OpenVpnImportOptions? OpenVpnOptions = null);
+
+public sealed record OpenVpnImportOptions(
+    string? Username,
+    string? Password);
 
 public sealed record AppRuleCreateRequest(
     AppKind AppKind,
@@ -29,8 +36,6 @@ public sealed record DiscoveredApplication(
     string? ExecutablePath,
     string? PackageFamilyName,
     string? PackageIdentity);
-
-public sealed record RoutingPlan(Guid ProfileId, IReadOnlyList<Guid> AppRuleIds);
 
 public sealed record StoredSecretReference(
     string SecretId,
@@ -84,6 +89,7 @@ public sealed record ServiceOverview(
     string ServiceVersion,
     AppTunnelSettings Settings,
     SessionState SessionState,
+    RouterDiagnosticsSnapshot RouterDiagnostics,
     StorageSnapshot Storage,
     IReadOnlyList<TunnelEngineStatus> TunnelEngines,
     IReadOnlyList<RouterBackendStatus> RouterBackends,

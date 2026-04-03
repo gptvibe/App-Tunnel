@@ -42,6 +42,18 @@ public sealed class ControlProtocolSerializationTests
     }
 
     [Fact]
+    public void UpdateSettingsRequestSerializesPreferredBackend()
+    {
+      var json = JsonSerializer.Serialize(
+        AppTunnelControlRequest.CreateUpdateSettings(
+          new AppTunnelSettingsUpdateRequest(RoutingBackendKind.WinDivert)),
+        AppTunnelJson.Default);
+
+      Assert.Contains("UpdateSettings", json, StringComparison.Ordinal);
+      Assert.Contains("WinDivert", json, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void ResponseRoundTripsSuccessEnvelope()
     {
         var json = """
@@ -55,6 +67,7 @@ public sealed class ControlProtocolSerializationTests
                 "runState": "Running"
               },
               "overview": null,
+              "settings": null,
               "logBundle": null,
               "profile": null,
               "tunnelStatus": null,

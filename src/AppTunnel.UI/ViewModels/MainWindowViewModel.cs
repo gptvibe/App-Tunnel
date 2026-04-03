@@ -13,6 +13,7 @@ public partial class MainWindowViewModel : ObservableObject
 {
     private readonly AppTunnelControlClient controlClient;
     private readonly AppRuleDialogService appRuleDialogService;
+    private readonly TunnelImportDialogService tunnelImportDialogService;
     private readonly ExecutableIconService executableIconService;
     private CancellationTokenSource? _autoRefreshCancellationSource;
     private Task? _autoRefreshTask;
@@ -20,18 +21,32 @@ public partial class MainWindowViewModel : ObservableObject
     public MainWindowViewModel(
         AppTunnelControlClient controlClient,
         AppRuleDialogService appRuleDialogService,
+        TunnelImportDialogService tunnelImportDialogService,
         ExecutableIconService executableIconService)
     {
         this.controlClient = controlClient;
         this.appRuleDialogService = appRuleDialogService;
+        this.tunnelImportDialogService = tunnelImportDialogService;
         this.executableIconService = executableIconService;
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         ExportLogsCommand = new AsyncRelayCommand(ExportLogsAsync);
         ImportWireGuardProfileCommand = new AsyncRelayCommand(ImportWireGuardProfileAsync);
+        ImportOpenVpnProfileCommand = new AsyncRelayCommand(ImportOpenVpnProfileAsync);
         ConnectProfileCommand = new AsyncRelayCommand(ConnectSelectedProfileAsync, CanConnectSelectedProfile);
         DisconnectProfileCommand = new AsyncRelayCommand(DisconnectSelectedProfileAsync, CanDisconnectSelectedProfile);
         AddAppRuleCommand = new AsyncRelayCommand(AddAppRuleAsync);
         AssignAppRuleCommand = new AsyncRelayCommand(AssignSelectedAppRuleAsync, CanAssignSelectedAppRule);
+        ApplyRoutingBackendCommand = new AsyncRelayCommand(ApplyRoutingBackendAsync);
+
+        foreach (var backend in new[]
+                 {
+                     RoutingBackendKind.DryRun,
+                     RoutingBackendKind.WinDivert,
+                     RoutingBackendKind.Wfp,
+                 })
+        {
+            AvailableRoutingBackends.Add(backend);
+        }
     }
 
     [ObservableProperty]
@@ -89,11 +104,20 @@ public partial class MainWindowViewModel : ObservableObject
     private string lastExportPath = "No bundle exported yet";
 
     [ObservableProperty]
+    private RoutingBackendKind selectedRoutingBackend = RoutingBackendKind.DryRun;
+
+    [ObservableProperty]
+    private string diagnosticsActiveTunnel = "None";
+
+    [ObservableProperty]
+    private string diagnosticsElevation = "Unavailable";
+
+    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasSelectedProfile))]
     private TunnelProfileItemViewModel? selectedProfile;
 
     [ObservableProperty]
-    private string profileActionMessage = "Import a WireGuard .conf profile to begin.";
+    private string profileActionMessage = "Import a WireGuard .conf or OpenVPN .ovpn profile to begin.";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasSelectedAppRule))]
@@ -114,6 +138,18 @@ public partial class MainWindowViewModel : ObservableObject
 
     public ObservableCollection<string> KnownGaps { get; } = [];
 
+    public ObservableCollection<RoutingBackendKind> AvailableRoutingBackends { get; } = [];
+
+    public ObservableCollection<string> SelectedProfileLogs { get; } = [];
+
+    public ObservableCollection<string> SelectedProcessDiagnostics { get; } = [];
+
+    public ObservableCollection<string> MappedFlowDiagnostics { get; } = [];
+
+    public ObservableCollection<string> DroppedPacketDiagnostics { get; } = [];
+
+    public ObservableCollection<string> ErrorStateDiagnostics { get; } = [];
+
     public bool HasSelectedProfile => SelectedProfile is not null;
 
     public bool HasSelectedAppRule => SelectedAppRule is not null;
@@ -124,6 +160,8 @@ public partial class MainWindowViewModel : ObservableObject
 
     public AsyncRelayCommand ImportWireGuardProfileCommand { get; }
 
+    public AsyncRelayCommand ImportOpenVpnProfileCommand { get; }
+
     public AsyncRelayCommand ConnectProfileCommand { get; }
 
     public AsyncRelayCommand DisconnectProfileCommand { get; }
@@ -131,6 +169,8 @@ public partial class MainWindowViewModel : ObservableObject
     public AsyncRelayCommand AddAppRuleCommand { get; }
 
     public AsyncRelayCommand AssignAppRuleCommand { get; }
+
+    public AsyncRelayCommand ApplyRoutingBackendCommand { get; }
 
     public async Task InitializeAsync()
     {
@@ -190,6 +230,44 @@ public partial class MainWindowViewModel : ObservableObject
 
             LastError = "None";
             ProfileActionMessage = $"Imported '{importedProfile.DisplayName}'.";
+            await RefreshCoreAsync(importedProfile.Id, SelectedAppRule?.Id);
+        }
+        catch (Exception ex)
+        {
+            LastError = ex.Message;
+            ProfileActionMessage = ex.Message;
+        }
+    }
+
+    public async Task ImportOpenVpnProfileAsync()
+    {
+        var openFileDialog = new OpenFileDialog
+        {
+            CheckFileExists = true,
+            Filter = "OpenVPN profile (*.ovpn)|*.ovpn",
+            Title = "Import OpenVPN profile",
+        };
+
+        if (openFileDialog.ShowDialog() != true)
+        {
+            return;
+        }
+
+        var dialogResult = tunnelImportDialogService.ShowOpenVpnImportDialog(openFileDialog.FileName);
+        if (dialogResult is null)
+        {
+            return;
+        }
+
+        try
+        {
+            var importedProfile = await controlClient.ImportProfileAsync(
+                openFileDialog.FileName,
+                dialogResult.DisplayName,
+                new OpenVpnImportOptions(dialogResult.Username, dialogResult.Password));
+
+            LastError = "None";
+            ProfileActionMessage = $"Imported '{importedProfile.DisplayName}' and stored its OpenVPN runtime material with DPAPI.";
             await RefreshCoreAsync(importedProfile.Id, SelectedAppRule?.Id);
         }
         catch (Exception ex)
@@ -303,6 +381,20 @@ public partial class MainWindowViewModel : ObservableObject
         }
     }
 
+    public async Task ApplyRoutingBackendAsync()
+    {
+        try
+        {
+            await controlClient.UpdateSettingsAsync(new AppTunnelSettingsUpdateRequest(SelectedRoutingBackend));
+            LastError = "None";
+            await RefreshCoreAsync(SelectedProfile?.Id, SelectedAppRule?.Id);
+        }
+        catch (Exception ex)
+        {
+            LastError = ex.Message;
+        }
+    }
+
     partial void OnSelectedProfileChanged(TunnelProfileItemViewModel? value)
     {
         ConnectProfileCommand.NotifyCanExecuteChanged();
@@ -316,6 +408,7 @@ public partial class MainWindowViewModel : ObservableObject
         ProfileActionMessage = value.ErrorMessage == "None"
             ? value.ConnectionSummary
             : value.ErrorMessage;
+        UpdateSelectedProfileLogs(RecentLogs);
     }
 
     partial void OnSelectedAppRuleChanged(AppRuleItemViewModel? value)
@@ -358,6 +451,7 @@ public partial class MainWindowViewModel : ObservableObject
             ProtocolVersion = ping.ProtocolVersion;
             LastHandshakeUtc = ping.TimestampUtc.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
             PreferredRoutingBackend = overview.Settings.PreferredRoutingBackend.ToString();
+            SelectedRoutingBackend = overview.Settings.PreferredRoutingBackend;
             TunnelManagerState = overview.SessionState.TunnelManagerState;
             RouterManagerState = overview.SessionState.RouterManagerState;
             StartedAtUtc = overview.SessionState.StartedAtUtc.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
@@ -369,6 +463,12 @@ public partial class MainWindowViewModel : ObservableObject
             ExportsDirectory = overview.Storage.ExportsDirectory;
             PipeName = overview.Settings.PipeName;
             RefreshIntervalSeconds = overview.Settings.RefreshIntervalSeconds.ToString(CultureInfo.InvariantCulture);
+            DiagnosticsActiveTunnel = overview.RouterDiagnostics.ActiveTunnel;
+            DiagnosticsElevation = overview.RouterDiagnostics.RequiresElevation
+                ? overview.RouterDiagnostics.IsElevated
+                    ? "Elevated"
+                    : "Elevation required"
+                : "Not required";
             LastError = "None";
 
             ReplaceItems(Profiles, profileItems);
@@ -377,6 +477,10 @@ public partial class MainWindowViewModel : ObservableObject
             ReplaceItems(TunnelEngines, overview.TunnelEngines.Select(DescribeTunnelEngine));
             ReplaceItems(RouterBackends, overview.RouterBackends.Select(DescribeRouter));
             ReplaceItems(KnownGaps, overview.KnownGaps);
+            ReplaceItems(SelectedProcessDiagnostics, overview.RouterDiagnostics.SelectedProcesses.Select(DescribeSelectedProcess));
+            ReplaceItems(MappedFlowDiagnostics, overview.RouterDiagnostics.MappedFlows.Select(DescribeMappedFlow));
+            ReplaceItems(DroppedPacketDiagnostics, overview.RouterDiagnostics.DroppedPackets.Select(DescribeDropCounter));
+            ReplaceItems(ErrorStateDiagnostics, overview.RouterDiagnostics.ErrorStates);
 
             SelectedProfile = Profiles.FirstOrDefault(profile => profile.Id == preferredProfileId)
                 ?? Profiles.FirstOrDefault(profile => profile.Id == SelectedProfile?.Id)
@@ -387,13 +491,15 @@ public partial class MainWindowViewModel : ObservableObject
 
             if (SelectedProfile is null)
             {
-                ProfileActionMessage = "Import a WireGuard .conf profile to begin.";
+                ProfileActionMessage = "Import a WireGuard .conf or OpenVPN .ovpn profile to begin.";
             }
 
             if (SelectedAppRule is null)
             {
                 AppActionMessage = "Add a Win32 .exe to create a rule.";
             }
+
+            UpdateSelectedProfileLogs(overview.RecentLogs);
         }
         catch (Exception ex)
         {
@@ -413,15 +519,22 @@ public partial class MainWindowViewModel : ObservableObject
             ExportsDirectory = "Unavailable";
             PipeName = "Unavailable";
             RefreshIntervalSeconds = "Unavailable";
+            DiagnosticsActiveTunnel = "Unavailable";
+            DiagnosticsElevation = "Unavailable";
             LastError = ex.Message;
             ProfileActionMessage = ex.Message;
 
             ReplaceItems(Profiles, []);
             ReplaceItems(AppRules, []);
             ReplaceItems(RecentLogs, []);
+            ReplaceItems(SelectedProfileLogs, []);
             ReplaceItems(TunnelEngines, []);
             ReplaceItems(RouterBackends, []);
             ReplaceItems(KnownGaps, []);
+            ReplaceItems(SelectedProcessDiagnostics, []);
+            ReplaceItems(MappedFlowDiagnostics, []);
+            ReplaceItems(DroppedPacketDiagnostics, []);
+            ReplaceItems(ErrorStateDiagnostics, []);
             SelectedProfile = null;
             SelectedAppRule = null;
             AppActionMessage = ex.Message;
@@ -486,4 +599,32 @@ public partial class MainWindowViewModel : ObservableObject
 
     private static string DescribeRouter(RouterBackendStatus status) =>
         $"{status.DisplayName} [{status.Readiness}] - {status.Notes}";
+
+    private static string DescribeSelectedProcess(SelectedProcessActivity process) =>
+        $"{process.DisplayName} (PID {process.ProcessId}) [{process.State}] -> {process.AssignedTunnel}";
+
+    private static string DescribeMappedFlow(FlowMappingSnapshot flow) =>
+        $"{flow.DisplayName}: {flow.OriginalFlow} => {flow.EffectiveFlow}";
+
+    private static string DescribeDropCounter(PacketDropCounter counter) =>
+        $"{counter.Reason}: {counter.Count}";
+
+    private void UpdateSelectedProfileLogs(IEnumerable<StructuredLogEntry> logs)
+    {
+        if (SelectedProfile is null)
+        {
+            ReplaceItems(SelectedProfileLogs, []);
+            return;
+        }
+
+        var profileId = SelectedProfile.Id.ToString("D");
+        var profileLogs = logs
+            .Where(entry => entry.Properties.TryGetValue("profileId", out var candidate)
+                && string.Equals(candidate, profileId, StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(entry => entry.TimestampUtc)
+            .Take(12)
+            .Select(entry => $"{entry.TimestampUtc.LocalDateTime:yyyy-MM-dd HH:mm:ss} [{entry.Level}] {entry.Message}");
+
+        ReplaceItems(SelectedProfileLogs, profileLogs);
+    }
 }

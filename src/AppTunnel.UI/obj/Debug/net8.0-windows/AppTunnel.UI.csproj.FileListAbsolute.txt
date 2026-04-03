@@ -67,3 +67,5 @@ C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\obj\Debug\net8.0-windo
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\obj\Debug\net8.0-windows\Views\AssignProfileDialog.baml
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\obj\Debug\net8.0-windows\Views\AddAppDialog.g.cs
 C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\obj\Debug\net8.0-windows\Views\AssignProfileDialog.g.cs
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\obj\Debug\net8.0-windows\Views\OpenVpnImportDialog.baml
+C:\Users\fungk\Desktop\GitHub\App Tunnel\src\AppTunnel.UI\obj\Debug\net8.0-windows\Views\OpenVpnImportDialog.g.cs

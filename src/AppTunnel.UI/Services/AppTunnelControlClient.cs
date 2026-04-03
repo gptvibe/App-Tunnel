@@ -21,13 +21,25 @@ public sealed class AppTunnelControlClient
         return response.Overview ?? throw new InvalidOperationException("The service did not return an overview payload.");
     }
 
-    public async Task<TunnelProfile> ImportProfileAsync(
-        string sourcePath,
-        string? displayName = null,
+    public async Task<AppTunnelSettings> UpdateSettingsAsync(
+        AppTunnelSettingsUpdateRequest request,
         CancellationToken cancellationToken = default)
     {
         var response = await SendAsync(
-            AppTunnelControlRequest.CreateImportProfile(sourcePath, displayName),
+            AppTunnelControlRequest.CreateUpdateSettings(request),
+            cancellationToken);
+
+        return response.Settings ?? throw new InvalidOperationException("The service did not return a settings payload.");
+    }
+
+    public async Task<TunnelProfile> ImportProfileAsync(
+        string sourcePath,
+        string? displayName = null,
+        OpenVpnImportOptions? openVpnImportOptions = null,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+            AppTunnelControlRequest.CreateImportProfile(sourcePath, displayName, openVpnImportOptions),
             cancellationToken);
 
         return response.Profile ?? throw new InvalidOperationException("The service did not return an imported profile payload.");
