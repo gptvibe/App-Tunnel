@@ -23,7 +23,7 @@
                                 <TextBlock FontFamily="{StaticResource HeadingFont}" FontSize="19" Text="{Binding DisplayName}" />
                                 <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding TunnelKind}" />
                                 <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding ImportedConfigPath}" />
-                                <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding Status}" />
+                                <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding ConnectionState}" />
                                 <TextBlock Style="{StaticResource ShellBodyStyle}" Text="{Binding ImportedAtUtc, StringFormat=Imported {0}}" />
                             </StackPanel>
                         </Border>

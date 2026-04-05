@@ -48,7 +48,8 @@ public sealed record AppTunnelSettings(
     RoutingBackendKind PreferredRoutingBackend,
     string DataRootDirectory,
     int RefreshIntervalSeconds,
-    bool StartMinimizedToTray);
+    bool StartMinimizedToTray,
+    DistributionMode DistributionMode = DistributionMode.Installer);
 
 public sealed record StorageSnapshot(
     string RootDirectory,
@@ -90,6 +91,7 @@ public sealed record ServiceOverview(
     AppTunnelSettings Settings,
     SessionState SessionState,
     RouterDiagnosticsSnapshot RouterDiagnostics,
+    WfpBackendDiagnostics WfpDiagnostics,
     StorageSnapshot Storage,
     IReadOnlyList<TunnelEngineStatus> TunnelEngines,
     IReadOnlyList<RouterBackendStatus> RouterBackends,

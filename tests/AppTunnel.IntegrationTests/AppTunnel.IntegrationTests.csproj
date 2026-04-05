@@ -17,7 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\AppTunnel.Deployment\AppTunnel.Deployment.csproj" />
     <ProjectReference Include="..\..\src\AppTunnel.Core\AppTunnel.Core.csproj" />
+    <ProjectReference Include="..\..\src\AppTunnel.Router.Wfp\AppTunnel.Router.Wfp.csproj" />
     <ProjectReference Include="..\..\src\AppTunnel.Service\AppTunnel.Service.csproj" />
     <ProjectReference Include="..\..\src\AppTunnel.Vpn.OpenVpn\AppTunnel.Vpn.OpenVpn.csproj" />
     <ProjectReference Include="..\..\src\AppTunnel.Vpn.WireGuard\AppTunnel.Vpn.WireGuard.csproj" />

@@ -1,0 +1,47 @@
+[Version]
+Signature="$WINDOWS NT$"
+Class=Network
+ClassGuid={4d36e972-e325-11ce-bfc1-08002be10318}
+Provider=%ProviderName%
+DriverVer=04/03/2026,1.0.0.0
+CatalogFile=AppTunnel.Router.WfpDriver.cat
+PnpLockdown=1
+
+[DestinationDirs]
+DefaultDestDir=12
+
+[DefaultInstall]
+CopyFiles=DriverCopyFiles
+
+[DefaultInstall.Services]
+AddService=AppTunnelWfp,0x00000002,ServiceInstall
+
+[DefaultUninstall]
+DelFiles=DriverCopyFiles
+
+[DefaultUninstall.Services]
+DelService=AppTunnelWfp,0x00000200
+
+[DriverCopyFiles]
+AppTunnel.Router.WfpDriver.sys
+
+[ServiceInstall]
+DisplayName=%ServiceDisplayName%
+Description=%ServiceDescription%
+ServiceBinary=%12%\AppTunnel.Router.WfpDriver.sys
+ServiceType=1
+StartType=3
+ErrorControl=1
+LoadOrderGroup=NDIS
+
+[SourceDisksFiles]
+AppTunnel.Router.WfpDriver.sys=1
+
+[SourceDisksNames]
+1=%DiskName%,,,
+
+[Strings]
+ProviderName="App Tunnel"
+DiskName="App Tunnel WFP Driver Disk"
+ServiceDisplayName="App Tunnel WFP Driver"
+ServiceDescription="Kernel-mode Windows Filtering Platform callout driver for App Tunnel routing."

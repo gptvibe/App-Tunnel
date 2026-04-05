@@ -22,6 +22,18 @@
 
         <Border Grid.Row="1" Margin="0,18,0,0" Style="{StaticResource ShellCardStyle}">
             <StackPanel>
+                <Border Background="{StaticResource WarningSurfaceBrush}"
+                        BorderBrush="{StaticResource WarningBorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="14"
+                        Padding="12"
+                        Visibility="{Binding ValidationMessageVisibility}">
+                    <TextBlock Text="{Binding ValidationMessage}"
+                               Foreground="{StaticResource WarningTextBrush}"
+                               FontWeight="SemiBold"
+                               TextWrapping="Wrap" />
+                </Border>
+
                 <TextBlock Style="{StaticResource ShellBodyStyle}" Text="Configuration file" />
                 <TextBlock Margin="0,8,0,0"
                            FontSize="16"

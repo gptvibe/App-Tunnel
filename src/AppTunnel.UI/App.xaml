@@ -4,21 +4,36 @@
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <FontFamily x:Key="HeadingFont">Bahnschrift SemiCondensed</FontFamily>
-        <Color x:Key="BackgroundColor">#FF101721</Color>
-        <Color x:Key="SurfaceColor">#FF18212E</Color>
-        <Color x:Key="SurfaceMutedColor">#FF212C3B</Color>
+        <Color x:Key="BackgroundColor">#FF0F1722</Color>
+        <Color x:Key="SurfaceColor">#FF182334</Color>
+        <Color x:Key="SurfaceMutedColor">#FF243244</Color>
+        <Color x:Key="SurfaceRaisedColor">#FF2B3B4E</Color>
         <Color x:Key="AccentColor">#FFF0713D</Color>
-        <Color x:Key="AccentSoftColor">#33F0713D</Color>
-        <Color x:Key="TextStrongColor">#FFF5F7FA</Color>
-        <Color x:Key="TextMutedColor">#FFB8C0CC</Color>
+        <Color x:Key="AccentSoftColor">#52F0713D</Color>
+        <Color x:Key="BorderColor">#FF486076</Color>
+        <Color x:Key="TextStrongColor">#FFF8FBFF</Color>
+        <Color x:Key="TextMutedColor">#FFD3DCE7</Color>
+        <Color x:Key="WarningSurfaceColor">#FF4A2D22</Color>
+        <Color x:Key="WarningBorderColor">#FFEFA26B</Color>
+        <Color x:Key="WarningTextColor">#FFFFE0CC</Color>
 
         <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
         <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
         <SolidColorBrush x:Key="SurfaceMutedBrush" Color="{StaticResource SurfaceMutedColor}" />
+        <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="{StaticResource SurfaceRaisedColor}" />
         <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
         <SolidColorBrush x:Key="AccentSoftBrush" Color="{StaticResource AccentSoftColor}" />
+        <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
         <SolidColorBrush x:Key="TextStrongBrush" Color="{StaticResource TextStrongColor}" />
         <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMutedColor}" />
+        <SolidColorBrush x:Key="WarningSurfaceBrush" Color="{StaticResource WarningSurfaceColor}" />
+        <SolidColorBrush x:Key="WarningBorderBrush" Color="{StaticResource WarningBorderColor}" />
+        <SolidColorBrush x:Key="WarningTextBrush" Color="{StaticResource WarningTextColor}" />
+
+        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{StaticResource AccentColor}" />
+        <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="{StaticResource SurfaceBrush}" />
+        <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="{StaticResource SurfaceRaisedColor}" />
+        <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}" Color="{StaticResource TextStrongColor}" />
 
         <Style x:Key="ShellCardStyle" TargetType="Border">
             <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
@@ -49,12 +64,82 @@
         </Style>
 
         <Style x:Key="ShellGhostButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource SurfaceMutedBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
             <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
-            <Setter Property="BorderBrush" Value="{StaticResource SurfaceMutedBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
             <Setter Property="Padding" Value="16,9" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="CaretBrush" Value="{StaticResource AccentBrush}" />
+            <Setter Property="SelectionBrush" Value="{StaticResource AccentBrush}" />
+        </Style>
+
+        <Style TargetType="PasswordBox">
+            <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="SelectionBrush" Value="{StaticResource AccentBrush}" />
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        </Style>
+
+        <Style TargetType="ListView">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+        </Style>
+
+        <Style TargetType="ListViewItem">
+            <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource AccentSoftBrush}" />
+                    <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="TabItem">
+            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="Padding" Value="18,8" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+                    <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="DataGridCell">
+            <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
     </Application.Resources>
 </Application>

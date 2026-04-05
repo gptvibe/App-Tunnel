@@ -100,6 +100,53 @@ public sealed class AppTunnelControlClient
         return response.LogBundle ?? throw new InvalidOperationException("The service did not return a log bundle payload.");
     }
 
+    public async Task<WfpOperationResult> InstallWfpBackendAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(AppTunnelControlRequest.CreateInstallWfpBackend(), cancellationToken);
+        return response.WfpOperation ?? throw new InvalidOperationException("The service did not return a WFP install payload.");
+    }
+
+    public async Task<WfpOperationResult> UninstallWfpBackendAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(AppTunnelControlRequest.CreateUninstallWfpBackend(), cancellationToken);
+        return response.WfpOperation ?? throw new InvalidOperationException("The service did not return a WFP uninstall payload.");
+    }
+
+    public async Task<WfpOperationResult> SetWfpFiltersEnabledAsync(bool isEnabled, CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+            AppTunnelControlRequest.CreateSetWfpFiltersEnabled(isEnabled),
+            cancellationToken);
+
+        return response.WfpOperation ?? throw new InvalidOperationException("The service did not return a WFP filter payload.");
+    }
+
+    public async Task<WfpOperationResult> AddWfpAppRuleAsync(
+        WfpAppRuleRegistration request,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+            AppTunnelControlRequest.CreateAddWfpAppRule(request),
+            cancellationToken);
+
+        return response.WfpOperation ?? throw new InvalidOperationException("The service did not return a WFP app-rule payload.");
+    }
+
+    public async Task<WfpOperationResult> RemoveWfpAppRuleAsync(Guid ruleId, CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+            AppTunnelControlRequest.CreateRemoveWfpAppRule(ruleId),
+            cancellationToken);
+
+        return response.WfpOperation ?? throw new InvalidOperationException("The service did not return a WFP app-rule removal payload.");
+    }
+
+    public async Task<WfpBackendDiagnostics> GetWfpDiagnosticsAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(AppTunnelControlRequest.CreateGetWfpDiagnostics(), cancellationToken);
+        return response.WfpDiagnostics ?? throw new InvalidOperationException("The service did not return WFP diagnostics.");
+    }
+
     private static async Task<AppTunnelControlResponse> SendAsync(
         AppTunnelControlRequest request,
         CancellationToken cancellationToken)

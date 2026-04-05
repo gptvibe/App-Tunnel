@@ -11,9 +11,12 @@ public sealed record OpenVpnImportDialogResult(
 
 public sealed class TunnelImportDialogService
 {
-    public OpenVpnImportDialogResult? ShowOpenVpnImportDialog(string sourcePath)
+    public OpenVpnImportDialogResult? ShowOpenVpnImportDialog(
+        string sourcePath,
+        OpenVpnImportDialogResult? initialValues = null,
+        string? validationMessage = null)
     {
-        var dialog = new OpenVpnImportDialog(sourcePath)
+        var dialog = new OpenVpnImportDialog(sourcePath, initialValues, validationMessage)
         {
             Owner = WpfApplication.Current?.MainWindow,
         };

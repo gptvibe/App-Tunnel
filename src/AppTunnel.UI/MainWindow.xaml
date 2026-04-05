@@ -38,9 +38,16 @@
             <Setter Property="Cursor" Value="Hand" />
         </Style>
         <Style TargetType="TabItem">
-            <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
             <Setter Property="FontSize" Value="15" />
             <Setter Property="Padding" Value="18,8" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource TextStrongBrush}" />
+                    <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
         <Style TargetType="DataGrid">
             <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />

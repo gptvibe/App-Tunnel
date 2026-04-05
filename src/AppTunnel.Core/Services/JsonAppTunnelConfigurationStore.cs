@@ -60,6 +60,7 @@ public sealed class JsonAppTunnelConfigurationStore(AppTunnelPaths paths) : IApp
                 RoutingBackendKind.DryRun,
                 paths.RootDirectory,
                 RefreshIntervalSeconds: 5,
-                StartMinimizedToTray: false));
+                StartMinimizedToTray: false,
+                DistributionMode: paths.DistributionMode));
     }
 }

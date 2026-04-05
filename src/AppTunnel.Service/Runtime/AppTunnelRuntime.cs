@@ -14,6 +14,7 @@ public sealed class AppTunnelRuntime(
     IApplicationDiscoveryService applicationDiscoveryService,
     IStructuredLogService structuredLogService,
     ILogBundleExporter logBundleExporter,
+    IWfpBackendControl wfpBackendControl,
     ServiceTunnelManager tunnelManager,
     RouterManager routerManager,
     IEnumerable<ITunnelEngine> tunnelEngines,
@@ -28,7 +29,8 @@ public sealed class AppTunnelRuntime(
             RoutingBackendKind.DryRun,
             AppTunnelPaths.GetDefaultRootDirectory(),
             RefreshIntervalSeconds: 5,
-            StartMinimizedToTray: false));
+            StartMinimizedToTray: false,
+            DistributionMode: DistributionMode.Installer));
 
     private static readonly string[] KnownGaps =
     [
@@ -138,7 +140,7 @@ public sealed class AppTunnelRuntime(
         return Task.FromResult(new PingReply(
             "App Tunnel Service",
             DateTimeOffset.UtcNow,
-            "routing-mvp-v1",
+            "1.0.0",
             _sessionState.RunState));
     }
 
@@ -165,10 +167,11 @@ public sealed class AppTunnelRuntime(
 
         return new ServiceOverview(
             GeneratedAtUtc: DateTimeOffset.UtcNow,
-            ServiceVersion: typeof(AppTunnelRuntime).Assembly.GetName().Version?.ToString() ?? "0.1.0-routing-mvp",
+            ServiceVersion: typeof(AppTunnelRuntime).Assembly.GetName().Version?.ToString() ?? "1.0.0",
             Settings: _configuration.Settings,
             SessionState: CreateSessionState(_sessionState.RunState),
             RouterDiagnostics: routerManager.Diagnostics,
+            WfpDiagnostics: await wfpBackendControl.GetDiagnosticsAsync(cancellationToken),
             Storage: paths.ToSnapshot(),
             TunnelEngines: BuildTunnelEngineStatuses(),
             RouterBackends: BuildRouterBackendStatuses(),
@@ -435,6 +438,37 @@ public sealed class AppTunnelRuntime(
         return await logBundleExporter.ExportAsync(destinationDirectory, cancellationToken);
     }
 
+    public Task<WfpOperationResult> InstallWfpBackendAsync(CancellationToken cancellationToken) =>
+        wfpBackendControl.InstallAsync(cancellationToken);
+
+    public Task<WfpOperationResult> UninstallWfpBackendAsync(CancellationToken cancellationToken) =>
+        wfpBackendControl.UninstallAsync(cancellationToken);
+
+    public Task<WfpOperationResult> SetWfpFiltersEnabledAsync(bool isEnabled, CancellationToken cancellationToken) =>
+        wfpBackendControl.SetFiltersEnabledAsync(isEnabled, cancellationToken);
+
+    public async Task<WfpOperationResult> AddWfpAppRuleAsync(
+        WfpAppRuleRegistration request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (request.ProfileId == Guid.Empty)
+        {
+            throw new ArgumentException("WFP app rules require a profile ID.", nameof(request));
+        }
+
+        _ = GetProfile(request.ProfileId);
+        return await wfpBackendControl.AddAppRuleAsync(request, cancellationToken);
+    }
+
+    public Task<WfpOperationResult> RemoveWfpAppRuleAsync(Guid ruleId, CancellationToken cancellationToken) =>
+        wfpBackendControl.RemoveAppRuleAsync(ruleId, cancellationToken);
+
+    public Task<WfpBackendDiagnostics> GetWfpDiagnosticsAsync(CancellationToken cancellationToken) =>
+        wfpBackendControl.GetDiagnosticsAsync(cancellationToken);
+
     private SessionState CreateSessionState(ServiceRunState runState) =>
         new(
             runState,
@@ -537,7 +571,50 @@ public sealed class AppTunnelRuntime(
 
         await configurationStore.SaveAsync(_configuration, cancellationToken);
         await ApplyRoutingPlanAsync(cancellationToken);
+        await SynchronizeWfpRulesAsync(cancellationToken);
         _sessionState = CreateSessionState(_sessionState.RunState);
+    }
+
+    private async Task SynchronizeWfpRulesAsync(CancellationToken cancellationToken)
+    {
+        var eligibleRules = _configuration.AppRules
+            .Where(rule => rule.IsEnabled && rule.ProfileId.HasValue)
+            .Select(BuildWfpRegistration)
+            .ToDictionary(rule => rule.RuleId);
+
+        var diagnostics = await wfpBackendControl.GetDiagnosticsAsync(cancellationToken);
+        var installedRuleIds = diagnostics.RegisteredRules
+            .Select(rule => rule.RuleId)
+            .ToHashSet();
+
+        foreach (var existingRuleId in installedRuleIds.Where(id => !eligibleRules.ContainsKey(id)))
+        {
+            await wfpBackendControl.RemoveAppRuleAsync(existingRuleId, cancellationToken);
+        }
+
+        foreach (var registration in eligibleRules.Values)
+        {
+            await wfpBackendControl.AddAppRuleAsync(registration, cancellationToken);
+        }
+    }
+
+    private static WfpAppRuleRegistration BuildWfpRegistration(AppRule appRule)
+    {
+        if (!appRule.ProfileId.HasValue)
+        {
+            throw new InvalidOperationException($"App rule '{appRule.Id:D}' is not assigned to a profile.");
+        }
+
+        return new WfpAppRuleRegistration(
+            appRule.Id,
+            appRule.AppKind,
+            appRule.DisplayName,
+            appRule.ExecutablePath,
+            appRule.PackageFamilyName,
+            appRule.PackageIdentity,
+            appRule.ProfileId.Value,
+            appRule.KillAppTrafficOnTunnelDrop,
+            appRule.IncludeChildProcesses);
     }
 
     private static Dictionary<string, string> BuildAppRuleProperties(AppRule appRule)

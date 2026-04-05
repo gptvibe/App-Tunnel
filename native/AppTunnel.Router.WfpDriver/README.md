@@ -1,16 +1,18 @@
 # AppTunnel.Router.WfpDriver
 
-Planned native Windows Filtering Platform callout driver.
+Kernel-mode WFP callout driver project.
 
-## Intent
+## Files
 
-- Classify and steer traffic for selected applications
-- Enforce production-grade routing policy beyond the WinDivert MVP
-- Provide a stable control surface for the user-mode bridge and service
+- `AppTunnel.Router.WfpDriver.vcxproj`: WDK project file
+- `AppTunnel.Router.WfpDriver.inf`: driver package manifest
+- `src/Driver.c`: callout registration, IOCTL handling, and baseline classify logic
+- `src/Driver.h`: driver globals and callback declarations
+- `../Common/AppTunnelWfpShared.h`: shared GUIDs, IOCTLs, and rule/diagnostic structs
 
-## TODO
+## Notes
 
-- Select the WDK project layout and minimum supported Windows build
-- Define callout layers, provider context, and policy update model
-- Implement signing and installer registration workflow
-- Add validation around DNS behavior, reconnect semantics, and leak prevention
+- Win32 executable matching is implemented in the design now.
+- Packaged-app matching fields are already present in the shared rule contract for a future revision.
+- Runtime state is supplied from user mode so the driver can keep kill-on-drop policy armed even when the tunnel is down.
+- Release distribution still requires a release-signed driver package. Test-signed binaries are for lab validation only.

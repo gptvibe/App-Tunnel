@@ -1,9 +1,13 @@
+using System.IO;
+using System.Text;
 using AppTunnel.UI.Services;
 using AppTunnel.UI.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WpfDispatcherUnhandledExceptionEventArgs = System.Windows.Threading.DispatcherUnhandledExceptionEventArgs;
 using WpfApplication = System.Windows.Application;
 using WpfExitEventArgs = System.Windows.ExitEventArgs;
+using WpfMessageBox = System.Windows.MessageBox;
 using WpfStartupEventArgs = System.Windows.StartupEventArgs;
 using WpfWindow = System.Windows.Window;
 using WpfWindowState = System.Windows.WindowState;
@@ -18,6 +22,10 @@ public partial class App : WpfApplication
 
     public App()
     {
+        DispatcherUnhandledException += OnDispatcherUnhandledException;
+        AppDomain.CurrentDomain.UnhandledException += OnCurrentDomainUnhandledException;
+        TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
+
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices(services =>
             {
@@ -122,5 +130,56 @@ public partial class App : WpfApplication
     {
         _allowWindowClose = true;
         Shutdown();
+    }
+
+    private void OnDispatcherUnhandledException(object sender, WpfDispatcherUnhandledExceptionEventArgs e)
+    {
+        RecordUiException("DispatcherUnhandledException", e.Exception);
+        WpfMessageBox.Show(
+            $"App Tunnel hit an unexpected UI error and kept running.{Environment.NewLine}{Environment.NewLine}{e.Exception.Message}",
+            "App Tunnel",
+            System.Windows.MessageBoxButton.OK,
+            System.Windows.MessageBoxImage.Error);
+        e.Handled = true;
+    }
+
+    private void OnCurrentDomainUnhandledException(object? sender, UnhandledExceptionEventArgs e)
+    {
+        RecordUiException("AppDomainUnhandledException", e.ExceptionObject as Exception);
+    }
+
+    private void OnUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+    {
+        RecordUiException("UnobservedTaskException", e.Exception);
+        e.SetObserved();
+    }
+
+    private static void RecordUiException(string source, Exception? exception)
+    {
+        try
+        {
+            var rootDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, ".."));
+            var logsDirectory = Path.Combine(rootDirectory, "logs");
+            Directory.CreateDirectory(logsDirectory);
+            var filePath = Path.Combine(logsDirectory, "ui-exceptions.log");
+            var builder = new StringBuilder()
+                .Append('[')
+                .Append(DateTimeOffset.Now.ToString("O"))
+                .Append("] ")
+                .Append(source)
+                .AppendLine();
+
+            if (exception is not null)
+            {
+                builder.AppendLine(exception.ToString());
+            }
+
+            builder.AppendLine();
+            File.AppendAllText(filePath, builder.ToString(), Encoding.UTF8);
+        }
+        catch
+        {
+            // Last-chance exception recording must not throw.
+        }
     }
 }

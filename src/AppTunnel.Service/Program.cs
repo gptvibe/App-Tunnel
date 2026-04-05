@@ -2,6 +2,7 @@ using AppTunnel.Core.Contracts;
 using AppTunnel.Core.Security;
 using AppTunnel.Core.Services;
 using AppTunnel.Router.WinDivert;
+using AppTunnel.Router.Wfp;
 using AppTunnel.Service;
 using AppTunnel.Service.Runtime;
 using AppTunnel.Vpn.OpenVpn;
@@ -24,11 +25,16 @@ builder.Logging.AddJsonConsole(options =>
     options.TimestampFormat = "O";
 });
 
-var configuredRootDirectory = builder.Configuration["AppTunnel:RootDirectory"];
-var appTunnelPaths = new AppTunnelPaths(
-    string.IsNullOrWhiteSpace(configuredRootDirectory)
-        ? AppTunnelPaths.GetDefaultRootDirectory()
-        : configuredRootDirectory);
+var rootOverride = ResolveArgumentValue(args, "--root")
+    ?? Environment.GetEnvironmentVariable("APPTUNNEL_ROOT_DIRECTORY");
+var configuredRootDirectory = rootOverride ?? builder.Configuration["AppTunnel:RootDirectory"];
+var portableMode = args.Any(argument => string.Equals(argument, "--portable", StringComparison.OrdinalIgnoreCase));
+var resolvedRootDirectory = string.IsNullOrWhiteSpace(configuredRootDirectory)
+    ? AppTunnelPaths.GetDefaultRootDirectory()
+    : configuredRootDirectory;
+var appTunnelPaths = portableMode
+    ? AppTunnelPaths.CreatePortable(resolvedRootDirectory)
+    : new AppTunnelPaths(resolvedRootDirectory);
 
 builder.Services.AddSingleton(appTunnelPaths);
 builder.Services.AddSingleton<IAppTunnelConfigurationStore, JsonAppTunnelConfigurationStore>();
@@ -38,6 +44,7 @@ builder.Services.AddSingleton<IApplicationDiscoveryService, WindowsApplicationDi
 builder.Services.AddSingleton<IDpapiProtector, DpapiProtectedData>();
 builder.Services.AddSingleton<ISecretStore, DpapiSecretStore>();
 builder.Services.AddSingleton<ILogBundleExporter, LogBundleExporter>();
+builder.Services.AddSingleton<IWfpBackendControl, WfpBackendControl>();
 var wireGuardBackendMode = Enum.TryParse<WireGuardBackendMode>(
     builder.Configuration["AppTunnel:WireGuard:Mode"],
     ignoreCase: true,
@@ -65,6 +72,7 @@ builder.Services.AddSingleton<IOpenVpnBackend, ManagedProcessOpenVpnBackend>();
 builder.Services.AddSingleton<ITunnelEngine, WireGuardTunnelEngine>();
 builder.Services.AddSingleton<ITunnelEngine, OpenVpnTunnelEngine>();
 builder.Services.AddSingleton<IRouterBackend, WinDivertRouterBackend>();
+builder.Services.AddSingleton<IRouterBackend, WfpRouterBackend>();
 builder.Services.AddSingleton<ServiceTunnelManager>();
 builder.Services.AddSingleton<RouterManager>();
 builder.Services.AddSingleton<AppTunnelRuntime>();
@@ -76,3 +84,18 @@ builder.Services.AddHostedService<NamedPipeControlServer>();
 
 var host = builder.Build();
 await host.RunAsync();
+
+static string? ResolveArgumentValue(IReadOnlyList<string> arguments, string key)
+{
+    for (var i = 0; i < arguments.Count; i++)
+    {
+        if (string.Equals(arguments[i], key, StringComparison.OrdinalIgnoreCase))
+        {
+            return i + 1 < arguments.Count
+                ? arguments[i + 1]
+                : null;
+        }
+    }
+
+    return null;
+}

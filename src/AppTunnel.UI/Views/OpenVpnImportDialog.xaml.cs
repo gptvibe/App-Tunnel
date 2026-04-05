@@ -3,23 +3,37 @@ using System.Windows;
 using AppTunnel.UI.Services;
 using WpfMessageBox = System.Windows.MessageBox;
 using WpfWindow = System.Windows.Window;
+using WpfVisibility = System.Windows.Visibility;
 
 namespace AppTunnel.UI.Views;
 
 public partial class OpenVpnImportDialog : WpfWindow
 {
-    public OpenVpnImportDialog(string sourcePath)
+    public OpenVpnImportDialog(
+        string sourcePath,
+        OpenVpnImportDialogResult? initialValues = null,
+        string? validationMessage = null)
     {
         SourcePath = Path.GetFullPath(sourcePath);
-        SuggestedDisplayName = Path.GetFileNameWithoutExtension(SourcePath);
+        SuggestedDisplayName = initialValues?.DisplayName ?? Path.GetFileNameWithoutExtension(SourcePath);
+        ValidationMessage = validationMessage ?? string.Empty;
         InitializeComponent();
         DataContext = this;
         DisplayNameTextBox.Text = SuggestedDisplayName;
+        UsernameTextBox.Text = initialValues?.Username ?? string.Empty;
+        PasswordTextBox.Password = initialValues?.Password ?? string.Empty;
     }
 
     public string SourcePath { get; }
 
     public string SuggestedDisplayName { get; }
+
+    public string ValidationMessage { get; }
+
+    public WpfVisibility ValidationMessageVisibility =>
+        string.IsNullOrWhiteSpace(ValidationMessage)
+            ? WpfVisibility.Collapsed
+            : WpfVisibility.Visible;
 
     public OpenVpnImportDialogResult? Result { get; private set; }
 

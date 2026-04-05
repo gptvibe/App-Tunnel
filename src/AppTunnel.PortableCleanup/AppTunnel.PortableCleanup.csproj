@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <AssemblyName>AppTunnelPortableCleanup</AssemblyName>
+    <RootNamespace>AppTunnel.PortableCleanup</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AppTunnel.Deployment\AppTunnel.Deployment.csproj" />
+  </ItemGroup>
+
+</Project>

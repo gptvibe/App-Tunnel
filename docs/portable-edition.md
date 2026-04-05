@@ -12,13 +12,28 @@ Portable means the app can live in a self-contained folder and does not require 
 - Secrets remain in DPAPI-protected storage owned by the service
 - Cleanup utility removes the service, drivers, and temporary state when the user wants to uninstall
 
-## Design implications
+## Implemented layout
 
-- Portable root detection must be explicit
-- The UI must surface elevation requirements and cleanup status clearly
-- Upgrades need an in-place folder replacement workflow that preserves portable metadata where safe
-- Logs and diagnostics should be exportable without depending on installer-owned locations
+- `AppTunnelPortable.exe`
+- `AppTunnelPortableCleanup.exe`
+- `runtime\`
+- `data\`
+- `logs\`
 
-## Current gap
+The two root utilities are published as self-contained single-file executables so the portable root stays runnable after a simple ZIP extract.
 
-The scaffold documents the portable mode but does not implement portable bootstrap, elevation workflow, or cleanup tooling yet.
+## Behavior
+
+- `AppTunnelPortable.exe`
+  - detects the portable root from its own folder
+  - creates `runtime\`, `data\`, and `logs\` if needed
+  - registers and starts `AppTunnelPortableService` on first run
+  - passes `--root "<portable>" --portable` to the service so config and secrets live under `data\` while logs stay under `logs\`
+- `AppTunnelPortableCleanup.exe`
+  - requires admin rights
+  - unregisters the portable service
+  - removes WFP state and log files
+
+## Admin Requirement
+
+Portable mode still requires administrator rights for networking components. The launcher may elevate on first run, and cleanup must elevate before unregistering the service or driver.

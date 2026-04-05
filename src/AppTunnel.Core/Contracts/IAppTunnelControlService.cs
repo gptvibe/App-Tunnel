@@ -23,4 +23,16 @@ public interface IAppTunnelControlService
     Task<ExportedLogBundle> ExportLogBundleAsync(
         string? destinationDirectory,
         CancellationToken cancellationToken);
+
+    Task<WfpOperationResult> InstallWfpBackendAsync(CancellationToken cancellationToken);
+
+    Task<WfpOperationResult> UninstallWfpBackendAsync(CancellationToken cancellationToken);
+
+    Task<WfpOperationResult> SetWfpFiltersEnabledAsync(bool isEnabled, CancellationToken cancellationToken);
+
+    Task<WfpOperationResult> AddWfpAppRuleAsync(WfpAppRuleRegistration request, CancellationToken cancellationToken);
+
+    Task<WfpOperationResult> RemoveWfpAppRuleAsync(Guid ruleId, CancellationToken cancellationToken);
+
+    Task<WfpBackendDiagnostics> GetWfpDiagnosticsAsync(CancellationToken cancellationToken);
 }

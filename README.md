@@ -9,7 +9,8 @@ Windows-only app-scoped VPN routing scaffold targeting C# .NET 8 WPF plus a Wind
 - Shared core domain models and backend abstractions
 - Named-pipe handshake between the WPF UI and Windows service
 - WireGuard .conf import, validation, DPAPI-backed secret storage, and service-managed tunnel lifecycle
-- Native placeholders for the future WFP production router
+- Native WFP driver/bridge scaffolding plus managed production-routing control APIs
+- Installer and portable release packaging scripts, docs, and smoke coverage
 
 ## Build requirements
 
@@ -72,11 +73,14 @@ To force mock mode for local development or tests, set the following in `src/App
 - `docs/risks.md`
 - `docs/portable-edition.md`
 - `docs/installer-edition.md`
+- `docs/wfp-backend.md`
+- `docs/release-checklist.md`
+- `docs/test-matrix.md`
 
 ## Known gaps
 
 - OpenVPN remains unimplemented
 - Live WireGuard sessions require the official WireGuard for Windows runtime; otherwise the mock backend is used
-- No WinDivert interception or WFP driver implementation yet
+- The WFP backend still requires staged native binaries; release shipping also requires production driver signing
 - No hardened named-pipe ACL model for service-to-user communication yet
-- No installer or portable cleanup utility yet
+- Redirect stamping is scaffolded in the WFP path, but full production tunnel steering still depends on the signed native package

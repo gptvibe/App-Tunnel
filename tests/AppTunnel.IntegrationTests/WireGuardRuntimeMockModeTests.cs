@@ -43,6 +43,7 @@ public sealed class WireGuardRuntimeMockModeTests
             new WindowsApplicationDiscoveryService(),
             structuredLogService,
             new FakeLogBundleExporter(),
+            new FakeWfpBackendControl(),
             new ServiceTunnelManager(tunnelEngines),
             new RouterManager(structuredLogService, Array.Empty<IRouterBackend>()),
             tunnelEngines,
@@ -104,6 +105,7 @@ public sealed class WireGuardRuntimeMockModeTests
             new WindowsApplicationDiscoveryService(),
             structuredLogService,
             new FakeLogBundleExporter(),
+            new FakeWfpBackendControl(),
             new ServiceTunnelManager(tunnelEngines),
             new RouterManager(structuredLogService, Array.Empty<IRouterBackend>()),
             tunnelEngines,
@@ -201,6 +203,79 @@ public sealed class WireGuardRuntimeMockModeTests
                 Path.Combine(destinationDirectory ?? Path.GetTempPath(), "bundle.zip"),
                 DateTimeOffset.UtcNow,
                 IncludedFileCount: 0));
+    }
+
+    private sealed class FakeWfpBackendControl : IWfpBackendControl
+    {
+        private readonly Dictionary<Guid, WfpRuleDiagnostic> _rules = [];
+        private bool _filtersEnabled;
+        private bool _installed;
+
+        public Task<WfpOperationResult> InstallAsync(CancellationToken cancellationToken)
+        {
+            _installed = true;
+            return Task.FromResult(CreateResult(true, "install", "installed"));
+        }
+
+        public Task<WfpOperationResult> UninstallAsync(CancellationToken cancellationToken)
+        {
+            _installed = false;
+            _filtersEnabled = false;
+            _rules.Clear();
+            return Task.FromResult(CreateResult(true, "uninstall", "uninstalled"));
+        }
+
+        public Task<WfpOperationResult> SetFiltersEnabledAsync(bool isEnabled, CancellationToken cancellationToken)
+        {
+            _filtersEnabled = isEnabled;
+            return Task.FromResult(CreateResult(true, "set-filters", isEnabled ? "enabled" : "disabled"));
+        }
+
+        public Task<WfpOperationResult> SetTunnelStateAsync(bool isConnected, CancellationToken cancellationToken) =>
+            Task.FromResult(CreateResult(true, "set-tunnel-state", isConnected ? "connected" : "disconnected"));
+
+        public Task<WfpOperationResult> AddAppRuleAsync(WfpAppRuleRegistration request, CancellationToken cancellationToken)
+        {
+            _rules[request.RuleId] = new WfpRuleDiagnostic(
+                request.RuleId,
+                request.AppKind,
+                request.DisplayName,
+                request.ExecutablePath ?? request.PackageFamilyName ?? string.Empty,
+                request.ProfileId.ToString("D"),
+                request.KillAppTrafficOnTunnelDrop,
+                request.IncludeChildProcesses,
+                DateTimeOffset.UtcNow);
+            return Task.FromResult(CreateResult(true, "add-rule", "added"));
+        }
+
+        public Task<WfpOperationResult> RemoveAppRuleAsync(Guid ruleId, CancellationToken cancellationToken)
+        {
+            _rules.Remove(ruleId);
+            return Task.FromResult(CreateResult(true, "remove-rule", "removed"));
+        }
+
+        public Task<WfpBackendDiagnostics> GetDiagnosticsAsync(CancellationToken cancellationToken) =>
+            Task.FromResult(CreateDiagnostics());
+
+        private WfpOperationResult CreateResult(bool succeeded, string operation, string message) =>
+            new(succeeded, operation, message, CreateDiagnostics(), DateTimeOffset.UtcNow);
+
+        private WfpBackendDiagnostics CreateDiagnostics() =>
+            new(
+                _installed ? WfpBackendInstallState.Installed : WfpBackendInstallState.NotInstalled,
+                DriverServiceInstalled: _installed,
+                BridgeReachable: true,
+                FiltersEnabled: _filtersEnabled,
+                DriverServiceName: "AppTunnelWfp",
+                DriverDisplayName: "App Tunnel WFP Driver",
+                DriverBinaryPath: "driver.sys",
+                BridgeBinaryPath: "bridge.exe",
+                RegisteredRuleCount: _rules.Count,
+                ActiveFlowCount: 0,
+                RegisteredRules: _rules.Values.ToArray(),
+                ActiveFlows: [],
+                Messages: [],
+                UpdatedAtUtc: DateTimeOffset.UtcNow);
     }
 
     private sealed class StubOpenVpnBackend : IOpenVpnBackend

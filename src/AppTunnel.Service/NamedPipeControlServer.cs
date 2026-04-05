@@ -141,6 +141,24 @@ public sealed class NamedPipeControlServer(
                 "Profile disconnected"),
             AppTunnelControlCommand.ExportLogBundle => AppTunnelControlResponse.FromLogBundle(
                 await controlService.ExportLogBundleAsync(request.DestinationDirectory, cancellationToken)),
+            AppTunnelControlCommand.InstallWfpBackend => AppTunnelControlResponse.FromWfpOperation(
+                await controlService.InstallWfpBackendAsync(cancellationToken)),
+            AppTunnelControlCommand.UninstallWfpBackend => AppTunnelControlResponse.FromWfpOperation(
+                await controlService.UninstallWfpBackendAsync(cancellationToken)),
+            AppTunnelControlCommand.EnableWfpFilters => AppTunnelControlResponse.FromWfpOperation(
+                await controlService.SetWfpFiltersEnabledAsync(true, cancellationToken)),
+            AppTunnelControlCommand.DisableWfpFilters => AppTunnelControlResponse.FromWfpOperation(
+                await controlService.SetWfpFiltersEnabledAsync(false, cancellationToken)),
+            AppTunnelControlCommand.AddWfpAppRule => AppTunnelControlResponse.FromWfpOperation(
+                await controlService.AddWfpAppRuleAsync(
+                    request.WfpAppRuleRegistration ?? throw new InvalidOperationException("AddWfpAppRule requires a WFP app-rule payload."),
+                    cancellationToken)),
+            AppTunnelControlCommand.RemoveWfpAppRule => AppTunnelControlResponse.FromWfpOperation(
+                await controlService.RemoveWfpAppRuleAsync(
+                    request.RuleId ?? throw new InvalidOperationException("RemoveWfpAppRule requires a rule ID."),
+                    cancellationToken)),
+            AppTunnelControlCommand.GetWfpDiagnostics => AppTunnelControlResponse.FromWfpDiagnostics(
+                await controlService.GetWfpDiagnosticsAsync(cancellationToken)),
             _ => AppTunnelControlResponse.Failed("unknown_command", $"Unsupported command '{request.Command}'."),
         };
     }

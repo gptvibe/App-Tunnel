@@ -6,6 +6,7 @@ using AppTunnel.UI.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using WpfMessageBox = System.Windows.MessageBox;
 
 namespace AppTunnel.UI.ViewModels;
 
@@ -253,29 +254,55 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        var dialogResult = tunnelImportDialogService.ShowOpenVpnImportDialog(openFileDialog.FileName);
-        if (dialogResult is null)
-        {
-            return;
-        }
+        OpenVpnImportDialogResult? dialogResult = null;
+        string? validationMessage = null;
 
-        try
+        while (true)
         {
-            var importedProfile = await controlClient.ImportProfileAsync(
+            dialogResult = tunnelImportDialogService.ShowOpenVpnImportDialog(
                 openFileDialog.FileName,
-                dialogResult.DisplayName,
-                new OpenVpnImportOptions(dialogResult.Username, dialogResult.Password));
+                dialogResult,
+                validationMessage);
+            if (dialogResult is null)
+            {
+                return;
+            }
 
-            LastError = "None";
-            ProfileActionMessage = $"Imported '{importedProfile.DisplayName}' and stored its OpenVPN runtime material with DPAPI.";
-            await RefreshCoreAsync(importedProfile.Id, SelectedAppRule?.Id);
-        }
-        catch (Exception ex)
-        {
-            LastError = ex.Message;
-            ProfileActionMessage = ex.Message;
+            try
+            {
+                var importedProfile = await controlClient.ImportProfileAsync(
+                    openFileDialog.FileName,
+                    dialogResult.DisplayName,
+                    new OpenVpnImportOptions(dialogResult.Username, dialogResult.Password));
+
+                LastError = "None";
+                ProfileActionMessage = $"Imported '{importedProfile.DisplayName}' and stored its OpenVPN runtime material with DPAPI.";
+                await RefreshCoreAsync(importedProfile.Id, SelectedAppRule?.Id);
+                return;
+            }
+            catch (Exception ex)
+            {
+                LastError = ex.Message;
+                ProfileActionMessage = ex.Message;
+
+                if (RequiresCredentials(ex.Message))
+                {
+                    validationMessage = ex.Message;
+                    continue;
+                }
+
+                WpfMessageBox.Show(
+                    ex.Message,
+                    "OpenVPN Import Failed",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Warning);
+                return;
+            }
         }
     }
+
+    private static bool RequiresCredentials(string message) =>
+        message.Contains("requires a username and password", StringComparison.OrdinalIgnoreCase);
 
     public async Task ConnectSelectedProfileAsync()
     {

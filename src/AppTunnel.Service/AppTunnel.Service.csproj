@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AppTunnel.Core\AppTunnel.Core.csproj" />
     <ProjectReference Include="..\AppTunnel.Router.WinDivert\AppTunnel.Router.WinDivert.csproj" />
+    <ProjectReference Include="..\AppTunnel.Router.Wfp\AppTunnel.Router.Wfp.csproj" />
     <ProjectReference Include="..\AppTunnel.Vpn.OpenVpn\AppTunnel.Vpn.OpenVpn.csproj" />
     <ProjectReference Include="..\AppTunnel.Vpn.WireGuard\AppTunnel.Vpn.WireGuard.csproj" />
   </ItemGroup>
